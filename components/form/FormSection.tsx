@@ -11,7 +11,7 @@ export interface FormFieldProps {
   setFields: any;
   fieldName: string;
   fieldId: string;
-  type: 'text' | 'textarea' | 'select' | 'radio';
+  type: 'text' | 'textarea' | 'select' | 'radio' | 'date';
   responseValue: string;
   options?: Option[];
   conditional: number | null;
@@ -64,7 +64,6 @@ const FormField: React.FC<FormFieldProps> = ({
       setFields(updatedArray);
     }
   }, [fields]);
-
   switch (type) {
     case 'textarea':
       inputField = (
@@ -117,6 +116,19 @@ const FormField: React.FC<FormFieldProps> = ({
             </div>
           ))}
         </>
+      );
+      break;
+    case 'date':
+      inputField = (
+        <input
+          className="w-full border rounded p-2 text-black"
+          type="date"
+          name={fieldId}
+          id={fieldId}
+          onChange={onChange}
+          required={true}
+          value={responseValue}
+        />
       );
       break;
     default:
