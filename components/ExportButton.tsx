@@ -56,7 +56,7 @@ export default function ExportButton() {
       } catch (error: any) {
         // The error thrown here contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
         const replaceErrors = (key: any, value: any) => {
-          if (value instanceof Error) {
+          if (value) {
             return Object.getOwnPropertyNames(value).reduce(
               (error: any, key: any) => {
                 error[key] = value[key];
