@@ -25,6 +25,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
         conditional: any;
         conditional_value: any;
         should_render: any;
+        read_only: any;
       }[]
     | undefined
   >(undefined);
@@ -67,7 +68,11 @@ export default function PddSection({ params }: { params: { id: string } }) {
               field_conditional_value,
               external_field_conditional,
               external_field_conditional_value,
-              external_bool
+              external_bool,
+              external_field_prefill,
+              external_field_conditionals,
+              external_field_conditional_values,
+              external_bools
             `
         )
         .eq('subsection_id', params.id)
@@ -79,15 +84,32 @@ export default function PddSection({ params }: { params: { id: string } }) {
         .eq('user_id', session?.user.id)
         .eq('subsection_id', params.id);
 
-      const fieldConditionalValues = formFieldsData
-        ?.filter((field) => field.external_field_conditional !== null)
-        .map((field) => field.external_field_conditional);
+      //conditionals
+      const fieldConditionalValuesArray = formFieldsData
+        ?.filter((field) => field.external_field_conditionals !== null)
+        .map((field) => field.external_field_conditionals);
+
+      const uniqueUUIDs = fieldConditionalValuesArray
+        ?.flat()
+        .filter((uuid, index, arr) => arr.indexOf(uuid) === index);
+
+      const { data: conditionalDataArray } = await supabase
+        .from('form_responses')
+        .select('field_id, response_value')
+        .eq('user_id', session?.user.id)
+        .in('field_id', uniqueUUIDs || []);
+
+      //prefilled
+      const fieldPrefillValues = formFieldsData
+        ?.filter((field) => field.external_field_prefill !== null)
+        .map((field) => field.external_field_prefill);
 
       const { data: prefillData } = await supabase
         .from('form_responses')
         .select('field_id, response_value')
         .eq('user_id', session?.user.id)
-        .in('field_id', fieldConditionalValues || []);
+        .in('field_id', fieldPrefillValues || []);
+
       const combinedData = formFieldsData?.map((formField) => {
         const matchingResponse = formResponsesData?.find(
           (formResponse) => formResponse.field_id === formField.id
@@ -97,20 +119,46 @@ export default function PddSection({ params }: { params: { id: string } }) {
           ? matchingResponse.response_value
           : '';
 
-        const associatedResponseValue =
-          formField.external_field_conditional === null
+        // Determine if field should render
+        let shouldRender = true;
+        if (formField.external_field_conditionals) {
+          for (
+            let i = 0;
+            i < formField.external_field_conditionals.length;
+            i++
+          ) {
+            let associatedResponseValue = conditionalDataArray?.find(
+              (data) =>
+                data.field_id === formField.external_field_conditionals[i]
+            )?.response_value;
+            if (
+              !(
+                (associatedResponseValue ===
+                  formField.external_field_conditional_values[i]) ===
+                formField.external_bools[i]
+              )
+            ) {
+              shouldRender = false;
+              break;
+            }
+          }
+        }
+        //
+
+        const associatedPrefillValue =
+          formField.external_field_prefill === null
             ? null
             : prefillData?.find(
-                (data) => data.field_id === formField.external_field_conditional
+                (data) => data.field_id === formField.external_field_prefill
               )?.response_value;
-        console.log(
-          associatedResponseValue,
-          formField.external_field_conditional_value
-        );
+
         return {
           field_id: formField.id,
           user_id: session?.user.id,
-          response_value: responseValue,
+          response_value:
+            associatedPrefillValue === null
+              ? responseValue
+              : associatedPrefillValue,
           subsection_id: params.id,
           label: formField.field_label,
           name: formField.field_name,
@@ -118,12 +166,8 @@ export default function PddSection({ params }: { params: { id: string } }) {
           options: formField.field_options,
           conditional: formField.field_conditional,
           conditional_value: formField.field_conditional_value,
-          should_render:
-            associatedResponseValue === null
-              ? true
-              : (associatedResponseValue ===
-                  formField.external_field_conditional_value) ===
-                formField.external_bool
+          should_render: shouldRender,
+          read_only: associatedPrefillValue === null ? false : true
         };
       });
       setFields(combinedData);
@@ -143,7 +187,6 @@ export default function PddSection({ params }: { params: { id: string } }) {
       const { data, error } = await supabase
         .from('form_responses')
         .upsert(modifiedFields);
-      console.log(data, error);
       if (error) {
         throw new Error('Upsert failed');
       }
@@ -171,6 +214,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
         conditional,
         conditional_value,
         should_render,
+        read_only,
         ...rest
       }) => {
         modifiedFields.push({ ...rest, response_value });
@@ -215,6 +259,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
                   conditional={field.conditional}
                   conditionalValue={field.conditional_value}
                   shouldRender={field.should_render}
+                  readOnly={field.read_only}
                 />
               ))}
             <div className="flex flex-row float-right gap-4">

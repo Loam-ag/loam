@@ -17,6 +17,7 @@ export interface FormFieldProps {
   conditional: number | null;
   conditionalValue: string | null;
   shouldRender: boolean;
+  readOnly: boolean;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -29,7 +30,8 @@ const FormField: React.FC<FormFieldProps> = ({
   options,
   conditional,
   conditionalValue,
-  shouldRender
+  shouldRender,
+  readOnly
 }) => {
   const [isFieldRendered, setIsFieldRendered] = useState(false);
   let inputField: JSX.Element = <></>;
@@ -75,6 +77,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           required={true}
           value={responseValue}
+          readOnly={readOnly}
         />
       );
       break;
@@ -111,8 +114,14 @@ const FormField: React.FC<FormFieldProps> = ({
                 onChange={onChange}
                 required={true}
                 checked={responseValue === option.name}
+                readOnly={readOnly}
               />
-              <label className="text-black">{option.name}</label>
+              <label
+                className="text-black whitespace-pre-line"
+                style={{ listStyleType: 'disc', marginLeft: '1em' }}
+              >
+                {option.name}
+              </label>
             </div>
           ))}
         </>
@@ -128,6 +137,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           required={true}
           value={responseValue}
+          readOnly={readOnly}
         />
       );
       break;
@@ -141,6 +151,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           required={true}
           value={responseValue}
+          readOnly={readOnly}
         />
       );
   }

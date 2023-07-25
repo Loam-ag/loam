@@ -169,6 +169,7 @@ export default function GetStarted({ params }: { params: { id: string } }) {
                   conditional={field.conditional}
                   conditionalValue={field.conditional_value}
                   shouldRender={true}
+                  readOnly={false}
                 />
               ))}
             <div className="flex flex-row float-right gap-4">
