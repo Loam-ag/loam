@@ -66,9 +66,6 @@ export default function PddSection({ params }: { params: { id: string } }) {
               field_options,
               field_conditional,
               field_conditional_value,
-              external_field_conditional,
-              external_field_conditional_value,
-              external_bool,
               external_field_prefill,
               external_field_conditionals,
               external_field_conditional_values,
@@ -226,7 +223,6 @@ export default function PddSection({ params }: { params: { id: string } }) {
     performUpsert(modifiedFields);
     return concatenatedString;
   };
-
   const generateResponse = (userInput: string) => {
     append({
       content: userInput,
@@ -240,10 +236,19 @@ export default function PddSection({ params }: { params: { id: string } }) {
     generateResponse(userInput);
   };
 
+  const onDuplicate = () => {
+    const uniqueFields = fields?.slice(0, 2);
+    const duplicatedFields = uniqueFields?.map((field) => ({
+      ...field, // Shallow copy of the original object
+      response_value: '' // Set the response_value to an empty string in the new object
+    }));
+    setFields(duplicatedFields);
+  };
+
   return (
     fields && (
       <div className="flex flex-row w-full gap-4">
-        <div className="w-1/2 mx-auto mt-8 px-4">
+        <div className="w-1/2 mx-auto mt-8 px-4 pb-4">
           <form onSubmit={handleSectionSubmit}>
             {fields &&
               fields?.map((field, index) => (
