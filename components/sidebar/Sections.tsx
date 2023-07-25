@@ -1,5 +1,6 @@
 'use client';
 
+import ExportButton from '../ExportButton';
 import SectionsDropdown from './SectionsDropdown';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
@@ -58,6 +59,9 @@ export default function Sections() {
         {sections?.slice(1).map((item) => (
           <SectionsDropdown key={item.id} section={item} />
         ))}
+        <div className="border-b-2 border-loam_3 mx-4">
+          <ExportButton />
+        </div>
       </div>
     )
   );
