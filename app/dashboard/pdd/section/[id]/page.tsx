@@ -11,6 +11,7 @@ import { FormEvent, useEffect, useState } from 'react';
 export default function PddSection({ params }: { params: { id: string } }) {
   const supabase = createClientComponentClient();
   const [aiOutput, setAiOutput] = useState('');
+  const [numberOfFields, setNumberOfFields] = useState(0);
   const [sectionPrompt, setSectionPrompt] = useState('');
   const [fields, setFields] = useState<
     | {
@@ -39,10 +40,9 @@ export default function PddSection({ params }: { params: { id: string } }) {
         .from('form_ai_outputs')
         .select('output_value')
         .eq('subsection_id', params.id)
-        .eq('user_id', session?.user.id);
-      setAiOutput(
-        aiOutput && aiOutput.length !== 0 ? aiOutput[0].output_value : ''
-      );
+        .eq('user_id', session?.user.id)
+        .maybeSingle();
+      setAiOutput(aiOutput ? aiOutput.output_value : '');
       const { data: sectionPrompt } = await supabase
         .from('form_subsections')
         .select(
@@ -74,12 +74,23 @@ export default function PddSection({ params }: { params: { id: string } }) {
         )
         .eq('subsection_id', params.id)
         .order('field_order');
+      setNumberOfFields(formFieldsData ? formFieldsData?.length : 0);
+      // const { data: formResponsesData } = await supabase
+      //   .from('form_responses')
+      //   .select('field_id, response_value')
+      //   .eq('user_id', session?.user.id)
+      //   .eq('subsection_id', params.id)
 
-      const { data: formResponsesData } = await supabase
-        .from('form_responses')
-        .select('field_id, response_value')
+      const { data: formSubsectionData } = await supabase
+        .from('form_subsection_responses')
+        .select('responses')
         .eq('user_id', session?.user.id)
-        .eq('subsection_id', params.id);
+        .eq('subsection_id', params.id)
+        .maybeSingle();
+      const formResponsesData: {
+        field_id: any;
+        response_value: any;
+      }[] = formSubsectionData && formSubsectionData.responses;
 
       //conditionals
       const fieldConditionalValuesArray = formFieldsData
@@ -107,66 +118,117 @@ export default function PddSection({ params }: { params: { id: string } }) {
         .eq('user_id', session?.user.id)
         .in('field_id', fieldPrefillValues || []);
 
-      const combinedData = formFieldsData?.map((formField) => {
-        const matchingResponse = formResponsesData?.find(
-          (formResponse) => formResponse.field_id === formField.id
-        );
-
-        const responseValue = matchingResponse
-          ? matchingResponse.response_value
-          : '';
-
-        // Determine if field should render
-        let shouldRender = true;
-        if (formField.external_field_conditionals) {
-          for (
-            let i = 0;
-            i < formField.external_field_conditionals.length;
-            i++
-          ) {
-            let associatedResponseValue = conditionalDataArray?.find(
-              (data) =>
-                data.field_id === formField.external_field_conditionals[i]
-            )?.response_value;
-            if (
-              !(
-                (associatedResponseValue ===
-                  formField.external_field_conditional_values[i]) ===
-                formField.external_bools[i]
-              )
+      let combinedData;
+      if (formResponsesData) {
+        combinedData = formResponsesData?.map((formResponse) => {
+          const formField = formFieldsData?.find(
+            (formField) => formField.id === formResponse.field_id
+          );
+          // Determine if field should render
+          let shouldRender = true;
+          if (formField?.external_field_conditionals) {
+            for (
+              let i = 0;
+              i < formField.external_field_conditionals.length;
+              i++
             ) {
-              shouldRender = false;
-              break;
+              let associatedResponseValue = conditionalDataArray?.find(
+                (data) =>
+                  data.field_id === formField.external_field_conditionals[i]
+              )?.response_value;
+              if (
+                !(
+                  (associatedResponseValue ===
+                    formField.external_field_conditional_values[i]) ===
+                  formField.external_bools[i]
+                )
+              ) {
+                shouldRender = false;
+                break;
+              }
             }
           }
-        }
-        //
+          //
+          const associatedPrefillValue =
+            formField?.external_field_prefill === null
+              ? null
+              : prefillData?.find(
+                  (data) => data.field_id === formField?.external_field_prefill
+                )?.response_value;
 
-        const associatedPrefillValue =
-          formField.external_field_prefill === null
-            ? null
-            : prefillData?.find(
-                (data) => data.field_id === formField.external_field_prefill
+          return {
+            field_id: formField?.id,
+            user_id: session?.user.id,
+            response_value:
+              associatedPrefillValue === null
+                ? formResponse.response_value
+                : associatedPrefillValue,
+            subsection_id: params.id,
+            label: formField?.field_label,
+            name: formField?.field_name,
+            type: formField?.field_type,
+            options: formField?.field_options,
+            conditional: formField?.field_conditional,
+            conditional_value: formField?.field_conditional_value,
+            should_render: shouldRender,
+            read_only: associatedPrefillValue === null ? false : true
+          };
+        });
+      } else {
+        combinedData = formFieldsData?.map((formField) => {
+          const responseValue = '';
+          // Determine if field should render
+          let shouldRender = true;
+          if (formField.external_field_conditionals) {
+            for (
+              let i = 0;
+              i < formField.external_field_conditionals.length;
+              i++
+            ) {
+              let associatedResponseValue = conditionalDataArray?.find(
+                (data) =>
+                  data.field_id === formField.external_field_conditionals[i]
               )?.response_value;
+              if (
+                !(
+                  (associatedResponseValue ===
+                    formField.external_field_conditional_values[i]) ===
+                  formField.external_bools[i]
+                )
+              ) {
+                shouldRender = false;
+                break;
+              }
+            }
+          }
+          //
 
-        return {
-          field_id: formField.id,
-          user_id: session?.user.id,
-          response_value:
-            associatedPrefillValue === null
-              ? responseValue
-              : associatedPrefillValue,
-          subsection_id: params.id,
-          label: formField.field_label,
-          name: formField.field_name,
-          type: formField.field_type,
-          options: formField.field_options,
-          conditional: formField.field_conditional,
-          conditional_value: formField.field_conditional_value,
-          should_render: shouldRender,
-          read_only: associatedPrefillValue === null ? false : true
-        };
-      });
+          const associatedPrefillValue =
+            formField.external_field_prefill === null
+              ? null
+              : prefillData?.find(
+                  (data) => data.field_id === formField.external_field_prefill
+                )?.response_value;
+
+          return {
+            field_id: formField.id,
+            user_id: session?.user.id,
+            response_value:
+              associatedPrefillValue === null
+                ? responseValue
+                : associatedPrefillValue,
+            subsection_id: params.id,
+            label: formField.field_label,
+            name: formField.field_name,
+            type: formField.field_type,
+            options: formField.field_options,
+            conditional: formField.field_conditional,
+            conditional_value: formField.field_conditional_value,
+            should_render: shouldRender,
+            read_only: associatedPrefillValue === null ? false : true
+          };
+        });
+      }
       setFields(combinedData);
     };
     getFormFields();
@@ -179,11 +241,22 @@ export default function PddSection({ params }: { params: { id: string } }) {
     }
   });
 
-  const performUpsert = async (modifiedFields: any[]) => {
+  const performUpsert = async (
+    modifiedFields: any[],
+    user_id: string,
+    subsection_id: string
+  ) => {
     try {
+      // const { data, error } = await supabase
+      //   .from('form_responses')
+      //   .upsert(modifiedFields);
       const { data, error } = await supabase
-        .from('form_responses')
-        .upsert(modifiedFields);
+        .from('form_subsection_responses')
+        .upsert({
+          user_id: user_id,
+          subsection_id: subsection_id,
+          responses: modifiedFields
+        });
       if (error) {
         throw new Error('Upsert failed');
       }
@@ -193,12 +266,17 @@ export default function PddSection({ params }: { params: { id: string } }) {
   };
 
   const saveProgress = () => {
+    // let modifiedFields:
+    //   | {
+    //       field_id: any;
+    //       user_id: any;
+    //       response_value: any;
+    //       subsection_id: any;
+    //     }[] = [];
     let modifiedFields:
       | {
           field_id: any;
-          user_id: any;
           response_value: any;
-          subsection_id: any;
         }[] = [];
     let concatenatedString = '';
     fields?.forEach(
@@ -212,6 +290,8 @@ export default function PddSection({ params }: { params: { id: string } }) {
         conditional_value,
         should_render,
         read_only,
+        user_id,
+        subsection_id,
         ...rest
       }) => {
         modifiedFields.push({ ...rest, response_value });
@@ -220,7 +300,9 @@ export default function PddSection({ params }: { params: { id: string } }) {
           : concatenatedString + '';
       }
     );
-    performUpsert(modifiedFields);
+    const userId = fields && fields[0].user_id;
+    const subsection_id = fields && fields[0].subsection_id;
+    performUpsert(modifiedFields, userId, subsection_id);
     return concatenatedString;
   };
   const generateResponse = (userInput: string) => {
@@ -236,14 +318,24 @@ export default function PddSection({ params }: { params: { id: string } }) {
     generateResponse(userInput);
   };
 
-  const onDuplicate = () => {
-    const uniqueFields = fields?.slice(0, 2);
-    const duplicatedFields = uniqueFields?.map((field) => ({
-      ...field, // Shallow copy of the original object
-      response_value: '' // Set the response_value to an empty string in the new object
-    }));
-    setFields(duplicatedFields);
+  const onAdd = () => {
+    const duplicatedResponses = fields
+      ?.slice(0, numberOfFields)
+      .map((response) => ({ ...response, response_value: '' }));
+
+    const mergedResponses = fields?.concat(duplicatedResponses || []);
+    setFields(mergedResponses);
   };
+
+  const onRemove = () => {
+    const finalResponses = fields?.slice(0, -numberOfFields);
+    setFields(finalResponses);
+  };
+
+  const dynamic = [
+    'd32fc445-4dc7-4361-9e63-126f70f89748',
+    '3e1e7108-8a35-4a3d-9f5a-8c706baedf91'
+  ];
 
   return (
     fields && (
@@ -256,6 +348,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
                   fields={fields}
                   setFields={setFields}
                   key={index}
+                  currIndex={index}
                   fieldName={field.name}
                   fieldId={field.field_id}
                   type={field.type}
@@ -282,6 +375,24 @@ export default function PddSection({ params }: { params: { id: string } }) {
           >
             Save Progress
           </button>
+          {fields?.length > numberOfFields &&
+            dynamic.includes(fields[0].subsection_id) && (
+              <button
+                onClick={onRemove}
+                className="bg-black text-white font-bold py-2 mt-8 px-4 rounded float-right mr-4"
+                disabled={fields?.length <= numberOfFields}
+              >
+                Remove
+              </button>
+            )}
+          {dynamic.includes(fields[0].subsection_id) && (
+            <button
+              onClick={onAdd}
+              className="bg-black text-white font-bold py-2 mt-8 px-4 rounded float-right mr-4"
+            >
+              Add
+            </button>
+          )}
         </div>
         <div className="w-1/2 bg-loam_1 p-4 overflow-y-auto flex flex-row h-[90vh] px-4">
           {sectionPrompt ? (

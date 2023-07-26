@@ -9,6 +9,7 @@ interface Option {
 export interface FormFieldProps {
   fields: any;
   setFields: any;
+  currIndex: number;
   fieldName: string;
   fieldId: string;
   type: 'text' | 'textarea' | 'select' | 'radio' | 'date';
@@ -23,6 +24,7 @@ export interface FormFieldProps {
 const FormField: React.FC<FormFieldProps> = ({
   fields,
   setFields,
+  currIndex,
   fieldName,
   fieldId,
   type,
@@ -38,8 +40,8 @@ const FormField: React.FC<FormFieldProps> = ({
   const onChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const updatedArray = fields.map((obj: any) => {
-      if (obj.field_id === fieldId) {
+    const updatedArray = fields.map((obj: any, index: number) => {
+      if (index === currIndex) {
         return { ...obj, response_value: e.target.value }; // Update the name property of the matching object
       }
       return obj; // Return the original object for other objects in the array
