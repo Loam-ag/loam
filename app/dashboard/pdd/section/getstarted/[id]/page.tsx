@@ -161,6 +161,7 @@ export default function GetStarted({ params }: { params: { id: string } }) {
                   fields={fields}
                   setFields={setFields}
                   key={index}
+                  currIndex={index}
                   fieldName={field.name}
                   fieldId={field.field_id}
                   type={field.type}
