@@ -376,6 +376,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
             Save Progress
           </button>
           {fields?.length > numberOfFields &&
+            fields[0] &&
             dynamic.includes(fields[0].subsection_id) && (
               <button
                 onClick={onRemove}
@@ -385,7 +386,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
                 Remove
               </button>
             )}
-          {dynamic.includes(fields[0].subsection_id) && (
+          {fields[0] && dynamic.includes(fields[0].subsection_id) && (
             <button
               onClick={onAdd}
               className="bg-black text-white font-bold py-2 mt-8 px-4 rounded float-right mr-4"
