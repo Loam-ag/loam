@@ -265,7 +265,9 @@ export default function PddSection({ params }: { params: { id: string } }) {
         .upsert({
           subsection_id: subsection_id,
           user_id: user_id,
-          output_value: aiOutput
+          output_value:
+            messages.filter((m) => m.role === 'assistant').pop()?.content ||
+            aiOutput
         });
       console.log(otherError);
       console.log(other);
