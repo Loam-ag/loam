@@ -23,7 +23,6 @@ export async function POST(req: Request) {
     { role: 'system', content: section_prompt }
   ] as Array<ChatCompletionRequestMessage>;
   // Ask OpenAI for a streaming chat completion given the prompt
-  console.log(messages);
   const response = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
     stream: true,
@@ -40,7 +39,6 @@ export async function POST(req: Request) {
         user_id: session?.user.id,
         output_value: completion
       });
-      console.log(data);
     }
   });
   // Respond with the stream
