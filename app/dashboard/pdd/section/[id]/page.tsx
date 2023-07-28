@@ -4,6 +4,7 @@ import FormSection from '@/components/form/FormSection';
 import AiAvatar from '@/components/icons/AiAvatar';
 import CopyIcon from '@/components/icons/CopyIcon';
 import EditIcon from '@/components/icons/EditIcon';
+import TrashIcon from '@/components/icons/TrashIcon';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useChat } from 'ai/react';
 import { FormEvent, useEffect, useState } from 'react';
@@ -272,8 +273,6 @@ export default function PddSection({ params }: { params: { id: string } }) {
             messages.filter((m) => m.role === 'assistant').pop()?.content ||
             aiOutput
         });
-      console.log(otherError);
-      console.log(other);
     } catch (error) {
       console.error(error); // Handle any error that occurred
     }
@@ -351,6 +350,30 @@ export default function PddSection({ params }: { params: { id: string } }) {
     '3e1e7108-8a35-4a3d-9f5a-8c706baedf91'
   ];
 
+  const deleteResponse = async () => {
+    try {
+      const { data: other, error: otherError } = await supabase
+        .from('form_ai_outputs')
+        .upsert({
+          subsection_id: params.id,
+          user_id: userId,
+          output_value: ''
+        });
+    } catch (error) {
+      console.error(error); // Handle any error that occurred
+    }
+  };
+
+  // useEffect(() => {
+  //   const lastMessage = messages
+  //     .filter((m) => m.role === 'assistant')
+  //     .pop()?.content;
+
+  //   if (lastMessage) {
+  //     setAiOutput(lastMessage)
+  //   }
+
+  // }, [messages])
   return (
     fields && (
       <div className="flex flex-row w-full gap-4">
@@ -416,6 +439,9 @@ export default function PddSection({ params }: { params: { id: string } }) {
                 <AiAvatar />
                 <EditIcon />
                 <CopyIcon />
+                <button onClick={deleteResponse}>
+                  <TrashIcon />
+                </button>
               </div>
               <p className="ml-6 text-black mt-4 whitespace-pre-line">
                 {messages.filter((m) => m.role === 'assistant').pop()

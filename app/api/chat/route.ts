@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     stream: true,
     messages: initialMessage.concat(messages)
   });
-  // C onvert the response into a friendly text-stream
+  // Convert the response into a friendly text-stream
   const stream = OpenAIStream(response, {
     onCompletion: async (completion: string) => {
       const { data, error } = await supabase.from('form_ai_outputs').upsert({
