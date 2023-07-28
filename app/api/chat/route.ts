@@ -18,7 +18,7 @@ export const runtime = 'edge';
 export async function POST(req: Request) {
   const supabase = createRouteHandlerClient({ cookies });
   // Extract the `messages` from the body of the request
-  const { messages, subsection_id, section_prompt } = await req.json();
+  const { messages, subsection_id, section_prompt, user_id } = await req.json();
   const initialMessage = [
     { role: 'system', content: section_prompt }
   ] as Array<ChatCompletionRequestMessage>;
@@ -31,12 +31,9 @@ export async function POST(req: Request) {
   // C onvert the response into a friendly text-stream
   const stream = OpenAIStream(response, {
     onCompletion: async (completion: string) => {
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
       const { data, error } = await supabase.from('form_ai_outputs').upsert({
         subsection_id: subsection_id,
-        user_id: session?.user.id,
+        user_id: user_id,
         output_value: completion
       });
     }

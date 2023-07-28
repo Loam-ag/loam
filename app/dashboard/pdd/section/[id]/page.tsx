@@ -13,6 +13,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
   const [aiOutput, setAiOutput] = useState('');
   const [numberOfFields, setNumberOfFields] = useState(0);
   const [sectionPrompt, setSectionPrompt] = useState('');
+  const [userId, setUserId] = useState('');
   const [fields, setFields] = useState<
     | {
         field_id: any;
@@ -54,6 +55,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
         .limit(1)
         .single();
       setSectionPrompt(sectionPrompt?.prompt);
+      setUserId(session?.user.id || '');
       const { data: formFieldsData } = await supabase
         .from('form_fields')
         .select(
@@ -237,6 +239,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
   const { messages, append } = useChat({
     body: {
       subsection_id: params.id,
+      user_id: userId,
       section_prompt: sectionPrompt
     }
   });
