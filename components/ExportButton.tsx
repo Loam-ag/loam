@@ -18,7 +18,7 @@ export default function ExportButton() {
     const {
       data: { session }
     } = await supabase.auth.getSession();
-    const { data, error } = await supabase
+    const { data: aiData, error: aiDataError } = await supabase
       .from('form_ai_outputs')
       .select(
         `
@@ -27,7 +27,16 @@ export default function ExportButton() {
       )
       .eq('user_id', session?.user.id);
 
-    const combinedObject = data?.reduce(
+    const { data: inputData, error: inputDataError } = await supabase
+      .from('form_subsection_responses')
+      .select(
+        `
+          responses
+        `
+      )
+      .eq('user_id', session?.user.id);
+
+    const aiDataObject = aiData?.reduce(
       (
         result: { [subsection_id: string]: string },
         item: {
@@ -40,6 +49,20 @@ export default function ExportButton() {
       },
       {}
     );
+
+    const inputDataObject = inputData?.reduce(
+      (acc: { [subsection_id: string]: string }, item) => {
+        item.responses.forEach((response: any) => {
+          acc[response.field_id] = response.response_value;
+        });
+        return acc;
+      },
+      {}
+    );
+
+    const combinedData = { ...aiDataObject, ...inputDataObject };
+    console.log(combinedData);
+
     loadFile('/template.docx', (error, content) => {
       if (error) {
         throw error;
@@ -49,7 +72,7 @@ export default function ExportButton() {
         paragraphLoop: true,
         linebreaks: true
       });
-      doc.setData(combinedObject);
+      doc.setData(combinedData);
       try {
         // render the document (replace all tag occurences
         doc.render();
