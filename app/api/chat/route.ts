@@ -19,7 +19,6 @@ export async function POST(req: Request) {
   const supabase = createRouteHandlerClient({ cookies });
   // Extract the `messages` from the body of the request
   const { messages, subsection_id, section_prompt } = await req.json();
-  console.log();
   const initialMessage = [
     { role: 'system', content: section_prompt }
   ] as Array<ChatCompletionRequestMessage>;
@@ -35,13 +34,11 @@ export async function POST(req: Request) {
       const {
         data: { session }
       } = await supabase.auth.getSession();
-      console.log(session, subsection_id, messages, section_prompt);
       const { data, error } = await supabase.from('form_ai_outputs').upsert({
         subsection_id: subsection_id,
         user_id: session?.user.id,
         output_value: completion
       });
-      console.log(error);
     }
   });
   // Respond with the stream

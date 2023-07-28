@@ -260,6 +260,15 @@ export default function PddSection({ params }: { params: { id: string } }) {
       if (error) {
         throw new Error('Upsert failed');
       }
+      const { data: other, error: otherError } = await supabase
+        .from('form_ai_outputs')
+        .upsert({
+          subsection_id: subsection_id,
+          user_id: user_id,
+          output_value: aiOutput
+        });
+      console.log(otherError);
+      console.log(other);
     } catch (error) {
       console.error(error); // Handle any error that occurred
     }
