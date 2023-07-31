@@ -11,6 +11,7 @@ import { FormEvent, useEffect, useState } from 'react';
 
 export default function PddSection({ params }: { params: { id: string } }) {
   const supabase = createClientComponentClient();
+  const [isDeletePressed, setIsDeletePressed] = useState(false);
   const [aiOutput, setAiOutput] = useState('');
   const [numberOfFields, setNumberOfFields] = useState(0);
   const [sectionPrompt, setSectionPrompt] = useState('');
@@ -78,11 +79,6 @@ export default function PddSection({ params }: { params: { id: string } }) {
         .eq('subsection_id', params.id)
         .order('field_order');
       setNumberOfFields(formFieldsData ? formFieldsData?.length : 0);
-      // const { data: formResponsesData } = await supabase
-      //   .from('form_responses')
-      //   .select('field_id, response_value')
-      //   .eq('user_id', session?.user.id)
-      //   .eq('subsection_id', params.id)
 
       const { data: formSubsectionData } = await supabase
         .from('form_subsection_responses')
@@ -104,22 +100,64 @@ export default function PddSection({ params }: { params: { id: string } }) {
         ?.flat()
         .filter((uuid, index, arr) => arr.indexOf(uuid) === index);
 
-      const { data: conditionalDataArray } = await supabase
-        .from('form_responses')
-        .select('field_id, response_value')
+      const { data: subsectionConditionals } = await supabase
+        .from('form_fields')
+        .select('subsection_id')
+        .in('id', uniqueUUIDs || []);
+
+      const subsectionConditionalIds = subsectionConditionals?.map(
+        (subsection) => subsection.subsection_id
+      );
+      const { data: conditionalData } = await supabase
+        .from('form_subsection_responses')
+        .select('responses')
         .eq('user_id', session?.user.id)
-        .in('field_id', uniqueUUIDs || []);
+        .in('subsection_id', subsectionConditionalIds || []);
+
+      const conditionalFieldResponses:
+        | {
+            responses: {
+              field_id: any;
+              response_value: any;
+            }[];
+          }[]
+        | null = conditionalData;
+
+      const conditionalDataArray = conditionalFieldResponses?.flatMap(
+        (item) => item.responses
+      );
 
       //prefilled
       const fieldPrefillValues = formFieldsData
         ?.filter((field) => field.external_field_prefill !== null)
         .map((field) => field.external_field_prefill);
 
+      const { data: subsectionsPrefill } = await supabase
+        .from('form_fields')
+        .select('subsection_id')
+        .in('id', fieldPrefillValues || []);
+      const subsectionPrefillIds = subsectionsPrefill?.map(
+        (subsection) => subsection.subsection_id
+      );
+
       const { data: prefillData } = await supabase
-        .from('form_responses')
-        .select('field_id, response_value')
+        .from('form_subsection_responses')
+        .select('responses')
         .eq('user_id', session?.user.id)
-        .in('field_id', fieldPrefillValues || []);
+        .in('subsection_id', subsectionPrefillIds || []);
+
+      const prefillFieldResponses:
+        | {
+            responses: {
+              field_id: any;
+              response_value: any;
+            }[];
+          }[]
+        | null = prefillData;
+
+      const prefillDataArray = prefillFieldResponses?.flatMap(
+        (item) => item.responses
+      );
 
       let combinedData;
       if (formResponsesData) {
@@ -155,7 +193,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
           const associatedPrefillValue =
             formField?.external_field_prefill === null
               ? null
-              : prefillData?.find(
+              : prefillDataArray?.find(
                   (data) => data.field_id === formField?.external_field_prefill
                 )?.response_value;
 
@@ -209,7 +247,7 @@ export default function PddSection({ params }: { params: { id: string } }) {
           const associatedPrefillValue =
             formField.external_field_prefill === null
               ? null
-              : prefillData?.find(
+              : prefillDataArray?.find(
                   (data) => data.field_id === formField.external_field_prefill
                 )?.response_value;
 
@@ -251,9 +289,6 @@ export default function PddSection({ params }: { params: { id: string } }) {
     subsection_id: string
   ) => {
     try {
-      // const { data, error } = await supabase
-      //   .from('form_responses')
-      //   .upsert(modifiedFields);
       const { data, error } = await supabase
         .from('form_subsection_responses')
         .upsert({
@@ -279,13 +314,6 @@ export default function PddSection({ params }: { params: { id: string } }) {
   };
 
   const saveProgress = () => {
-    // let modifiedFields:
-    //   | {
-    //       field_id: any;
-    //       user_id: any;
-    //       response_value: any;
-    //       subsection_id: any;
-    //     }[] = [];
     let modifiedFields:
       | {
           field_id: any;
@@ -325,6 +353,12 @@ export default function PddSection({ params }: { params: { id: string } }) {
     });
   };
 
+  useEffect(() => {
+    if (isDeletePressed && messages.pop()?.role === 'assistant') {
+      setIsDeletePressed(false);
+    }
+  }, [messages]);
+
   const handleSectionSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const userInput = saveProgress();
@@ -359,21 +393,12 @@ export default function PddSection({ params }: { params: { id: string } }) {
           user_id: userId,
           output_value: ''
         });
+      setIsDeletePressed(true);
     } catch (error) {
       console.error(error); // Handle any error that occurred
     }
   };
 
-  // useEffect(() => {
-  //   const lastMessage = messages
-  //     .filter((m) => m.role === 'assistant')
-  //     .pop()?.content;
-
-  //   if (lastMessage) {
-  //     setAiOutput(lastMessage)
-  //   }
-
-  // }, [messages])
   return (
     fields && (
       <div className="flex flex-row w-full gap-4">
@@ -444,8 +469,10 @@ export default function PddSection({ params }: { params: { id: string } }) {
                 </button>
               </div>
               <p className="ml-6 text-black mt-4 whitespace-pre-line">
-                {messages.filter((m) => m.role === 'assistant').pop()
-                  ?.content || aiOutput}
+                {isDeletePressed
+                  ? ''
+                  : messages.filter((m) => m.role === 'assistant').pop()
+                      ?.content || aiOutput}
               </p>
             </>
           ) : (
