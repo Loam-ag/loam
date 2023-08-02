@@ -26,15 +26,78 @@ export default function ExportButton() {
         `
       )
       .eq('user_id', session?.user.id);
-
     const { data: inputData, error: inputDataError } = await supabase
       .from('form_subsection_responses')
       .select(
         `
-          responses
+          responses, subsection_id
         `
       )
       .eq('user_id', session?.user.id);
+    //
+    const subsectionIdsArray = [
+      'd32fc445-4dc7-4361-9e63-126f70f89748',
+      '3e1e7108-8a35-4a3d-9f5a-8c706baedf91',
+      '42e2514a-6b18-4a03-8e43-d4d8ed5b8e35',
+      '3b05c693-cf23-4f22-8645-2e4d968c6ebd'
+    ];
+
+    const { matchingArray, remainingArray } = inputData?.reduce(
+      (acc: any, item) => {
+        if (subsectionIdsArray.includes(item.subsection_id)) {
+          acc.matchingArray.push(item);
+        } else {
+          acc.remainingArray.push(item);
+        }
+        return acc;
+      },
+      { matchingArray: [], remainingArray: [] }
+    );
+    //
+    const resultObject = matchingArray?.reduce(
+      (
+        acc: {
+          [subsectionId: string]: { [fieldId: string]: string }[];
+        },
+        item: any
+      ) => {
+        const subsectionId = item.subsection_id;
+        acc[subsectionId] = item.responses.reduce(
+          (
+            fieldObjAcc: { [fieldId: string]: string }[],
+            response: { field_id: string; response_value: string }
+          ) => {
+            fieldObjAcc.push({ [response.field_id]: response.response_value });
+            return fieldObjAcc;
+          },
+          []
+        );
+        return acc;
+      },
+      {}
+    );
+
+    //
+    const outputObject: any = {};
+
+    for (const key in resultObject) {
+      const originalArray = resultObject[key];
+      const newArray = [];
+      let tempObj = {};
+
+      for (const obj of originalArray) {
+        const [key] = Object.keys(obj);
+        if (tempObj.hasOwnProperty(key)) {
+          newArray.push(tempObj);
+          tempObj = {};
+        }
+        tempObj = { ...tempObj, ...obj };
+      }
+
+      newArray.push(tempObj);
+      outputObject[key] = newArray;
+    }
+    //
 
     const aiDataObject = aiData?.reduce(
       (
@@ -49,9 +112,8 @@ export default function ExportButton() {
       },
       {}
     );
-
-    const inputDataObject = inputData?.reduce(
-      (acc: { [subsection_id: string]: string }, item) => {
+    const inputDataObject = remainingArray?.reduce(
+      (acc: { [subsection_id: string]: string }, item: any) => {
         item.responses.forEach((response: any) => {
           acc[response.field_id] = response.response_value;
         });
@@ -59,8 +121,14 @@ export default function ExportButton() {
       },
       {}
     );
-
-    const combinedData = { ...aiDataObject, ...inputDataObject };
+    console.log(aiDataObject);
+    console.log(inputDataObject);
+    console.log(outputObject);
+    const combinedData = {
+      ...aiDataObject,
+      ...inputDataObject,
+      ...outputObject
+    };
     console.log(combinedData);
 
     loadFile('/template.docx', (error, content) => {
