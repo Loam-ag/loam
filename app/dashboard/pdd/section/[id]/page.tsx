@@ -243,7 +243,6 @@ export default function PddSection({ params }: { params: { id: string } }) {
             }
           }
           //
-
           const associatedPrefillValue =
             formField.external_field_prefill === null
               ? null
