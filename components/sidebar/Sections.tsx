@@ -1,12 +1,14 @@
 'use client';
 
 import ExportButton from '../ExportButton';
+import ArrowIcon from '../icons/ArrowIcon';
 import SectionsDropdown from './SectionsDropdown';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Sections() {
+  const [isHidden, setIsHidden] = useState(false);
   const [sections, setSections] = useState<
     | {
         id: any;
@@ -44,25 +46,45 @@ export default function Sections() {
     getSections();
   }, []);
   return (
-    sections && (
-      <div className="bg-loam_1">
-        <div className="border-b-2 border-loam_3 mx-4">
-          <Link
-            href={`/dashboard/pdd/section/getstarted/${
-              sections && sections[0].form_subsections[0].id
-            }`}
-            className="text-black text-[18px] mx-6 py-6 block text-left "
+    sections &&
+    (!isHidden ? (
+      <div className="w-[18vw] h-[90vh] bg-loam_1 text-white overflow-y-auto">
+        <div className="flex float-right">
+          <div
+            className="flex flex-row mt-2 mr-2 hover:cursor-pointer"
+            onClick={() => setIsHidden(true)}
           >
-            0. Get Started
-          </Link>
+            <ArrowIcon />
+            <ArrowIcon />
+          </div>
         </div>
-        {sections?.slice(1).map((item) => (
-          <SectionsDropdown key={item.id} section={item} />
-        ))}
-        <div className="border-b-2 border-loam_3 mx-4">
-          <ExportButton />
+        <div className="bg-loam_1">
+          <div className="border-b-2 border-loam_3 mx-4">
+            <Link
+              href={`/dashboard/pdd/section/getstarted/${
+                sections && sections[0].form_subsections[0].id
+              }`}
+              className="text-black text-[18px] mx-6 py-6 block text-left "
+            >
+              0. Get Started
+            </Link>
+          </div>
+          {sections?.slice(1).map((item) => (
+            <SectionsDropdown key={item.id} section={item} />
+          ))}
+          <div className="border-b-2 border-loam_3 mx-4">
+            <ExportButton />
+          </div>
         </div>
       </div>
-    )
+    ) : (
+      <div
+        className="flex flex-row mt-2 ml-4 absolute rotate-180 hover:cursor-pointer"
+        onClick={() => setIsHidden(false)}
+      >
+        <ArrowIcon />
+        <ArrowIcon />
+      </div>
+    ))
   );
 }

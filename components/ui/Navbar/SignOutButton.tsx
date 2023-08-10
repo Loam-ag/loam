@@ -9,7 +9,7 @@ export default function SignOutButton() {
   const { supabase } = useSupabase();
   return (
     <button
-      className="text-black"
+      className="text-white"
       onClick={async () => {
         await supabase.auth.signOut();
         router.push('/signin');
