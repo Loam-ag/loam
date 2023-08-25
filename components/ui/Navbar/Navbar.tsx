@@ -14,7 +14,7 @@ export default async function Navbar() {
   } = await supabase.auth.getUser();
 
   return (
-    <nav className="bg-white">
+    <nav className="bg-black">
       <div>
         <div className="flex flex-row justify-between py-4 align-center md:py-6 px-8">
           <Link href="/" aria-label="Logo">
