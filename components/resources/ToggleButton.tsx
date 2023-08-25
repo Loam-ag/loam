@@ -1,18 +1,15 @@
+import { ToggleButtonProps } from './types';
 import React from 'react';
+import { FC } from 'react';
 
-type Props = {
-  text: string;
-  selected: boolean;
-};
-
-export default function ToggleButton({ text, selected }: Props) {
+export const ToggleButton: FC<ToggleButtonProps> = ({ label, selected }) => {
   return (
     <div className="p-1 mx-1">
       {selected ? (
-        <div className="font-semibold text-black">{text}</div>
+        <div className="font-semibold text-black">{label}</div>
       ) : (
-        <div className="font-light text-black">{text}</div>
+        <div className="font-light text-black">{label}</div>
       )}
     </div>
   );
-}
+};
