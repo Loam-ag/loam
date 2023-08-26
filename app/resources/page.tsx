@@ -15,49 +15,25 @@ export default function page({}: Props) {
   const [verra_methodologies, setVerra_methodologies] = React.useState<any>([]);
   const [verra_modules, setVerra_modules] = React.useState<any>([]);
   const [verra_tools, setVerra_tools] = React.useState<any>([]);
+
+  const getMethodologies = async () => {
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+    const { data, error } = await supabase
+      .from('verra_methodologies')
+      .select('*');
+    if (error) {
+      console.log(error);
+    } else {
+      // Add data to array
+      setVerra_methodologies(data);
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const getMethodologies = async () => {
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
-      const { data, error } = await supabase
-        .from('verra_methodologies')
-        .select('*');
-      if (error) {
-        console.log(error);
-      } else {
-        // Add data to array
-        setVerra_methodologies([...verra_methodologies, data]);
-        setIsLoading(false);
-      }
-    };
-    const getModules = async () => {
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
-      const { data, error } = await supabase.from('verra_modules').select('*');
-      if (error) {
-        console.log(error);
-      } else {
-        // Add data to array
-        setVerra_modules([...verra_modules, data]);
-      }
-    };
-    const getTools = async () => {
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
-      const { data, error } = await supabase.from('verra_tools').select('*');
-      if (error) {
-        console.log(error);
-      } else {
-        // Add data to array
-        setVerra_tools([...verra_tools, data]);
-      }
-    };
-    getMethodologies();
-    getModules();
-    getTools();
+    getMethodologies().then(() => console.log(verra_methodologies));
   }, []);
 
   return (
@@ -65,7 +41,9 @@ export default function page({}: Props) {
       <div className="flex-col m-3 pt-1 pb-3 px-1 w-full border-red-500 border-[2px]">
         <ToggleBar />
         <FilterBar />
-        <Table />
+        {verra_methodologies.map((methodology: any) =>
+          console.log(methodology)
+        )}
       </div>
     </div>
   );

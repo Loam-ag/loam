@@ -1,12 +1,11 @@
 import TableRow from './TableRow';
+import { MethodologyType, TableProps } from './types';
 import React from 'react';
 
-type Props = {};
-
-const TableBody = (props: Props) => {
+const TableBody = (data: MethodologyType | any) => {
   return (
     <>
-      <TableRow />
+      <TableRow data={data} />
     </>
   );
 };
