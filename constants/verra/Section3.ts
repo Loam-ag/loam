@@ -190,11 +190,32 @@ export const VERRA_3_04: SubsectionFieldParams = {
 };
 
 export const VERRA_3_05: SubsectionFieldParams = {
-  verra_3_01_title: {
+  verra_3_05_step0: {
+    defaultValue: '',
+    label: 'Step 0: Is the proposed project activity the first of its kind?',
+    type: 'radio',
+    options: ['Yes', 'No']
+  },
+  verra_3_05_step1a: {
+    defaultValue: '',
+    label: 'Sub-step 1a: Define alternatives to the project activity',
+    type: 'textarea'
+  },
+  verra_3_05_step1b: {
     defaultValue: '',
     label:
-      'Provide the title, reference and version number of the methodology or methodologies applied to the project. Include also the title and version number of any tools applied by the project.',
+      'Sub-step 1b: Identify realistic and credible alternative scenario(s) to the project activity that are in compliance with mandatory legislation and regulations taking into account the enforcement in the region or country and EB decisions on national and/or sectoral policies and regulations',
     type: 'textarea'
+  },
+  verra_3_05_step2a: {
+    defaultValue: '',
+    label: 'Sub-step 2a: Determine appropriate analysis method',
+    type: 'radio',
+    options: [
+      'Simple cost analysis',
+      'Investment comparison analysis',
+      'Benchmark analysis'
+    ]
   }
 };
 

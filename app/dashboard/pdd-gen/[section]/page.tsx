@@ -5,10 +5,8 @@ import AiAvatar from '@/components/icons/AiAvatar';
 import CopyIcon from '@/components/icons/CopyIcon';
 import EditIcon from '@/components/icons/EditIcon';
 import TrashIcon from '@/components/icons/TrashIcon';
-import {
-  SubsectionFieldParams,
-  SECTION_1_VERRA_FIELDS
-} from '@/constants/verra/Section1';
+import { SECTION_1_VERRA_FIELDS } from '@/constants/verra/Section1';
+import { SubsectionFieldParams } from '@/constants/verra/types';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
