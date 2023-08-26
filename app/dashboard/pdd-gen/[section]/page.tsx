@@ -5,7 +5,10 @@ import AiAvatar from '@/components/icons/AiAvatar';
 import CopyIcon from '@/components/icons/CopyIcon';
 import EditIcon from '@/components/icons/EditIcon';
 import TrashIcon from '@/components/icons/TrashIcon';
-import { SubsectionFieldParams, VERRA_FIELDS } from '@/constants/verra/Fields';
+import {
+  SubsectionFieldParams,
+  SECTION_1_VERRA_FIELDS
+} from '@/constants/verra/Section1';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
@@ -33,25 +36,25 @@ export default function PddSection({
   const onSubmit: SubmitHandler<any> = (data) => console.log(data);
 
   useEffect(() => {
-    setFields(VERRA_FIELDS[params.section]);
+    const VerraSubsection = SECTION_1_VERRA_FIELDS[params.section];
+    setFields(VerraSubsection);
 
     // fetch from database
 
     // if nothing in database
     const fieldDefaultValues: SubsectionFieldDefaultValues = Object.keys(
-      VERRA_FIELDS[params.section]
+      VerraSubsection
     ).reduce((obj, key) => {
-      obj[key] = VERRA_FIELDS[params.section][key].defaultValue;
+      obj[key] = VerraSubsection[key].defaultValue;
       return obj;
     }, {} as SubsectionFieldDefaultValues);
-
+    console.log(fieldDefaultValues);
     reset(fieldDefaultValues);
   }, []);
 
   const handleSave = () => {
     console.log(getValues());
   };
-
   return (
     <div className="flex flex-row w-full gap-4">
       {fields && (

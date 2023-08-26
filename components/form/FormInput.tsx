@@ -1,6 +1,6 @@
 'use client';
 
-import { Field } from '@/constants/verra/Fields';
+import { Field } from '@/constants/verra/types';
 import { useEffect, useState } from 'react';
 import {
   FieldValues,
@@ -34,22 +34,23 @@ export default function FormInput({
     field;
   const [isFieldRendered, setIsFieldRendered] = useState(false);
   const compareConditionals = (
-    conditionalFields: Record<string, string>,
+    conditionalFields: Record<string, string> | undefined,
     watchedFields: Record<string, string>
   ) => {
-    for (const key in conditionalFields) {
-      if (conditionalFields[key] !== watchedFields[key]) {
-        if (isFieldRendered) {
-          resetField(fieldName);
+    if (conditionalFields) {
+      for (const key in conditionalFields) {
+        if (conditionalFields[key] !== watchedFields[key]) {
+          if (isFieldRendered) {
+            resetField(fieldName);
+          }
+          return false;
         }
-        return false;
       }
     }
     return true;
   };
   useEffect(() => {
-    field.conditionals &&
-      setIsFieldRendered(compareConditionals(field.conditionals, watchFields));
+    setIsFieldRendered(compareConditionals(field.conditionals, watchFields));
   }, [watchFields]);
 
   switch (type) {
