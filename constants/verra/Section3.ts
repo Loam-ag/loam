@@ -199,13 +199,19 @@ export const VERRA_3_05: SubsectionFieldParams = {
   verra_3_05_step1a: {
     defaultValue: '',
     label: 'Sub-step 1a: Define alternatives to the project activity',
-    type: 'textarea'
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
   },
   verra_3_05_step1b: {
     defaultValue: '',
     label:
       'Sub-step 1b: Identify realistic and credible alternative scenario(s) to the project activity that are in compliance with mandatory legislation and regulations taking into account the enforcement in the region or country and EB decisions on national and/or sectoral policies and regulations',
-    type: 'textarea'
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
   },
   verra_3_05_step2a: {
     defaultValue: '',
@@ -215,7 +221,94 @@ export const VERRA_3_05: SubsectionFieldParams = {
       'Simple cost analysis',
       'Investment comparison analysis',
       'Benchmark analysis'
-    ]
+    ],
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
+  },
+  verra_3_05_cdm: {
+    defaultValue: '',
+    label:
+      'Sub-step 2b: Document the costs associated with the CDM project activity and the alternatives identified in Step 1 and demonstrate that there is at least one alternative which is less costly than the project activity',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No',
+      verra_3_05_step2a: 'Simple cost analysis'
+    }
+  },
+  verra_3_05_indicator: {
+    defaultValue: '',
+    label:
+      'Sub-step 2b: Identify the financial indicator, such as IRR, NPV, cost benefit ratio, or unit cost of service (e.g. levelized cost of electricity  production in $/kWh or levelized cost of delivered heat in $/GJ) most suitable for the project type and decision-making context',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No',
+      verra_3_05_step2a: 'Investment comparison analysis'
+    }
+  },
+  verra_3_05_benchmark: {
+    defaultValue: '',
+    label:
+      'Sub-step 2b: Identify the financial/economic indicator, such as IRR, most suitable for the project type and decision context.',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No',
+      verra_3_05_step2a: 'Benchmark analysis'
+    }
+  },
+  verra_3_05_step2c: {
+    defaultValue: '',
+    label:
+      'Sub-step 2c: Calculation and comparison of financial indicators (only applicable to Options II and III): Calculate the suitable financial indicator for the proposed CDM project activity and, in the case of Option II above, for the other alternatives. Include all relevant costs (including, for example, the investment cost, the operations and maintenance costs), and revenues (excluding CER revenues, but possibly including inter alia subsidies/fiscal incentives, ODA, etc., where applicable), and, as appropriate, non-market cost and benefits in the case of public investors if this is standard practice for the selection of public investments in the host country.',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
+  },
+  verra_3_05_step2d: {
+    defaultValue: '',
+    label:
+      'Sub-step 2d: Sensitivity analysis (only applicable to Options II and III): Include a sensitivity analysis that shows whether the conclusion regarding the financial/economic attractiveness is robust to reasonable variations in the critical assumptions.',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
+  },
+  verra_3_05_step3a: {
+    defaultValue: '',
+    label:
+      'Sub-step 3a: Identify barriers that would prevent the implementation of the proposed CDM project activity.',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
+  },
+  verra_3_05_step3b: {
+    defaultValue: '',
+    label:
+      'Sub-step 3b: Show that the identified barriers would not prevent the implementation of at least one of the alternatives (except the proposed project activity).',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
+  },
+  verra_3_05_step4a: {
+    defaultValue: '',
+    label:
+      'Sub-step 4a:The proposed CDM project activity(ies) applies measure(s) that are listed in the definitions section above.',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
+  },
+  verra_3_05_step4b: {
+    defaultValue: '',
+    label:
+      'Sub-step 4b: The proposed CDM project activity(ies) does not apply any of the measures that are listed in the definitions section above.',
+    type: 'textarea',
+    conditionals: {
+      verra_3_05_step0: 'No'
+    }
   }
 };
 
