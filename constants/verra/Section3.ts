@@ -1,13 +1,35 @@
 import { SubsectionFieldParams } from './types';
 
-// export const VERRA_3_01: SubsectionFieldParams = {
-//   verra_3_01_title: {
-//     defaultValue: '',
-//     label:
-//       'Provide the title, reference and version number of the methodology or methodologies applied to the project. Include also the title and version number of any tools applied by the project.',
-//     type: 'textarea'
-//   },
-// };
+export const VERRA_3_01: SubsectionFieldParams = {
+  verra_3_01_methodology: {
+    defaultValue: '',
+    label: 'Methodology Name',
+    type: 'text'
+  },
+  verra_3_01_methodology_version: {
+    defaultValue: '',
+    label: 'Methdology Version Number',
+    type: 'text'
+  },
+  verra_3_01_tools: {
+    label: 'Tool',
+    type: 'array',
+    fields: [
+      {
+        fieldName: 'verra_3_01_tools_name',
+        defaultValue: '',
+        label: 'Tool Name',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_3_01_tools_version',
+        defaultValue: '',
+        label: 'Tool Version Number',
+        type: 'text'
+      }
+    ]
+  }
+};
 
 export const VERRA_3_02: SubsectionFieldParams = {
   verra_3_02_clause1: {
@@ -343,7 +365,7 @@ export const VERRA_3_06: SubsectionFieldParams = {
 };
 
 export const SECTION_3_VERRA_FIELDS: Record<string, SubsectionFieldParams> = {
-  // verra_3_01: VERRA_3_01,
+  verra_3_01: VERRA_3_01,
   verra_3_02: VERRA_3_02,
   verra_3_03: VERRA_3_03,
   verra_3_04: VERRA_3_04,

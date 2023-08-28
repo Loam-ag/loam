@@ -1,22 +1,153 @@
 import { SubsectionFieldParams } from './types';
 
 export const VERRA_5_01: SubsectionFieldParams = {
-  verra_5_01_greenfield: {
-    defaultValue: '',
-    label:
-      'Is the project activity an installation of a Greenfield power plant with or without a BESS?',
-    type: 'radio',
-    options: ['Yes', 'No']
+  verra_5_01_data: {
+    label: 'Data/Parameter',
+    type: 'array',
+    fields: [
+      {
+        fieldName: 'verra_5_01_data_parameter',
+        defaultValue: '',
+        label: 'Data/Parameter',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_01_data_unit',
+        defaultValue: '',
+        label: 'Data unit',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_01_data_description',
+        defaultValue: '',
+        label: 'Description',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_01_data_source',
+        defaultValue: '',
+        label: 'Source of data',
+        type: 'textarea'
+      },
+      {
+        fieldName: 'verra_5_01_data_value',
+        defaultValue: '',
+        label: 'Value applied',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_01_data_justification',
+        defaultValue: '',
+        label:
+          'Justification of choice of data or description of measurement methods and procedures applied',
+        type: 'textarea'
+      },
+      {
+        fieldName: 'verra_5_01_data_purpose',
+        defaultValue: '',
+        label: 'Purpose of Data',
+        type: 'radio',
+        options: [
+          'Determination of baseline scenario (AFOLU projects only)',
+          'Calculation of baseline emissions',
+          'Calculation of project emissions',
+          'Calculation of leakage'
+        ]
+      },
+      {
+        fieldName: 'verra_5_01_data_comments',
+        defaultValue: '',
+        label: 'Comments',
+        type: 'textarea'
+      }
+    ]
   }
 };
 
 export const VERRA_5_02: SubsectionFieldParams = {
-  verra_5_02_greenfield: {
-    defaultValue: '',
-    label:
-      'Is the project activity an installation of a Greenfield power plant with or without a BESS?',
-    type: 'radio',
-    options: ['Yes', 'No']
+  verra_5_02_data: {
+    label: 'Data/Parameter',
+    type: 'array',
+    fields: [
+      {
+        fieldName: 'verra_5_02_data_parameter',
+        defaultValue: '',
+        label: 'Data/Parameter',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_02_data_unit',
+        defaultValue: '',
+        label: 'Data unit',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_02_data_description',
+        defaultValue: '',
+        label: 'Description',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_02_data_source',
+        defaultValue: '',
+        label: 'Source of data',
+        type: 'textarea'
+      },
+      {
+        fieldName: 'verra_5_02_data_measurements',
+        defaultValue: '',
+        label:
+          'Description of measurement methods and procedures to be applied',
+        type: 'textarea'
+      },
+      {
+        fieldName: 'verra_5_02_data_frequency',
+        defaultValue: '',
+        label: 'Frequency of monitoring/recording',
+        type: 'textarea'
+      },
+      {
+        fieldName: 'verra_5_02_data_value',
+        defaultValue: '',
+        label: 'Value applied',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_02_data_monitoring',
+        defaultValue: '',
+        label: 'Monitoring equipment',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_02_data_qa',
+        defaultValue: '',
+        label: 'QA/QC procedures to be applied',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_5_02_data_purpose',
+        defaultValue: '',
+        label: 'Purpose of Data',
+        type: 'radio',
+        options: [
+          'Calculation of baseline emissions',
+          'Calculation of project emissions',
+          'Calculation of leakage'
+        ]
+      },
+      {
+        fieldName: 'verra_5_02_calculation',
+        defaultValue: '',
+        label: 'Calculation method',
+        type: 'textarea'
+      },
+      {
+        fieldName: 'verra_5_02_data_comments',
+        defaultValue: '',
+        label: 'Comments',
+        type: 'textarea'
+      }
+    ]
   }
 };
 

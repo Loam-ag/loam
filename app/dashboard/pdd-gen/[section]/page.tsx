@@ -44,18 +44,7 @@ export default function PddSection({
     setFields(VerraSubsection);
 
     // fetch from database
-    // const x: SubsectionFieldDefaultValues = {
-    //   verra_1_05_contact: [
-    //     {
-    //       verra_1_05_contact_orgname: '',
-    //       verra_1_05_contact_person: '',
-    //       verra_1_05_contact_title: '',
-    //       verra_1_05_contact_address: '',
-    //       verra_1_05_contact_phone: '',
-    //       verra_1_05_contact_email: ''
-    //     }
-    //   ]
-    // };
+
     // if nothing in database
     const fieldDefaultValues: SubsectionFieldDefaultValues = Object.keys(
       VerraSubsection

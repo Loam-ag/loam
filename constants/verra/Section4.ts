@@ -171,12 +171,42 @@ export const VERRA_4_02: SubsectionFieldParams = {
 export const VERRA_4_03: SubsectionFieldParams = {};
 
 export const VERRA_4_04: SubsectionFieldParams = {
-  verra_4_04_length: {
-    defaultValue: '',
-    label: 'How many years will the project run?',
-    type: 'text'
+  verra_4_04_estimates: {
+    label: 'Estimates for Year',
+    type: 'array',
+    fields: [
+      {
+        fieldName: 'verra_4_04_estimates_year',
+        defaultValue: '',
+        label: 'Year',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_4_04_estimates_baseline',
+        defaultValue: '',
+        label: 'Estimated baseline emissions or removals (tCO2e)',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_4_04_estimates_project',
+        defaultValue: '',
+        label: 'Estimated project emissions or removals (tCO2e)',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_4_04_estimates_leakage',
+        defaultValue: '',
+        label: 'Estimated leakage emissions (tCO2e)',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_4_04_estimates_ghg',
+        defaultValue: '',
+        label: 'Estimated net GHG emission reductions or removals (tCO2e)',
+        type: 'text'
+      }
+    ]
   }
-  // ADD DYNAMIC FIELDS
 };
 
 export const SECTION_4_VERRA_FIELDS: Record<string, SubsectionFieldParams> = {

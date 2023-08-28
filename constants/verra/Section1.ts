@@ -231,13 +231,56 @@ export const VERRA_1_05: SubsectionFieldParams = {
   }
 };
 
-// export const VERRA_1_06: SubsectionFieldParams = {
-//   verra_1_06_: {
-//     defaultValue: '',
-//     label: '',
-//     type: 'textarea'
-//   }
-// };
+export const VERRA_1_06: SubsectionFieldParams = {
+  verra_1_06_entity: {
+    label: 'Project Proponent',
+    type: 'array',
+    fields: [
+      {
+        fieldName: 'verra_1_06_entity_orgname',
+        defaultValue: '',
+        label: 'Organization name',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_06_entity_role',
+        defaultValue: '',
+        label: 'Role in the project',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_06_entity_contact',
+        defaultValue: '',
+        label: 'Contact person',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_06_entity_title',
+        defaultValue: '',
+        label: 'Title',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_06_entity_address',
+        defaultValue: '',
+        label: 'Address',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_06_entity_telephone',
+        defaultValue: '',
+        label: 'Telephone',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_06_entity_email',
+        defaultValue: '',
+        label: 'Email',
+        type: 'text'
+      }
+    ]
+  }
+};
 
 export const VERRA_1_07: SubsectionFieldParams = {
   verra_1_07_ownership: {
@@ -280,36 +323,54 @@ export const VERRA_1_09: SubsectionFieldParams = {
   }
 };
 
-// export const VERRA_1_10: SubsectionFieldParams = {
-//   verra_1_10_emissions: {
-//     defaultValue: '',
-//     label:
-//       'The estimated annual GHG emission reductions/removals of the project are:',
-//     type: 'radio',
-//     options: [
-//       '<20,000 tCO2e/year',
-//       '20,000 – 100,000 tCO2e/year',
-//       '100,001 – 1,000,000 tCO2e/year',
-//       '>1,000,000 tCO2e/year'
-//     ],
-//     externalConditionals: {
-//       verra_1_04_development: ['Yes', true]
-//     }
-//   },
-//   verra_1_10_scale: {
-//     defaultValue: '',
-//     label:
-//       'The estimated annual GHG emission reductions/removals of the project are:',
-//     type: 'radio',
-//     options: [
-//       'Project (Less than or equal to 300,000 tonnes of CO2e per year)',
-//       'Large Project (Greater than 300,000 tonnes of CO2e per year)'
-//     ],
-//     externalConditionals: {
-//       verra_1_04_development: ['Yes', true]
-//     }
-//   }
-// };
+export const VERRA_1_10: SubsectionFieldParams = {
+  verra_1_10_emissions: {
+    defaultValue: '',
+    label:
+      'The estimated annual GHG emission reductions/removals of the project are:',
+    type: 'radio',
+    options: [
+      '<20,000 tCO2e/year',
+      '20,000 – 100,000 tCO2e/year',
+      '100,001 – 1,000,000 tCO2e/year',
+      '>1,000,000 tCO2e/year'
+    ],
+    externalConditionals: {
+      verra_1_04_development: ['Yes', true]
+    }
+  },
+  verra_1_10_scale: {
+    defaultValue: '',
+    label:
+      'The estimated annual GHG emission reductions/removals of the project are:',
+    type: 'radio',
+    options: [
+      'Project (Less than or equal to 300,000 tonnes of CO2e per year)',
+      'Large Project (Greater than 300,000 tonnes of CO2e per year)'
+    ],
+    externalConditionals: {
+      verra_1_04_development: ['Yes', true]
+    }
+  },
+  verra_1_10_reductions: {
+    label: 'Project Proponent',
+    type: 'array',
+    fields: [
+      {
+        fieldName: 'verra_1_10_reductions_year',
+        defaultValue: '',
+        label: 'Year',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_10_reductions_estimate',
+        defaultValue: '',
+        label: 'Estimated GHG emission reductions or removals (tCO2e)',
+        type: 'text'
+      }
+    ]
+  }
+};
 
 export const VERRA_1_11: SubsectionFieldParams = {
   verra_1_11_activity: {
@@ -695,11 +756,11 @@ export const SECTION_1_VERRA_FIELDS: Record<string, SubsectionFieldParams> = {
   verra_1_03: VERRA_1_03,
   verra_1_04: VERRA_1_04,
   verra_1_05: VERRA_1_05,
-  // verra_1_06: VERRA_1_06,
+  verra_1_06: VERRA_1_06,
   verra_1_07: VERRA_1_07,
   verra_1_08: VERRA_1_08,
   verra_1_09: VERRA_1_09,
-  // verra_1_10: VERRA_1_10,
+  verra_1_10: VERRA_1_10,
   verra_1_11: VERRA_1_11,
   verra_1_12: VERRA_1_12,
   verra_1_13: VERRA_1_13,
