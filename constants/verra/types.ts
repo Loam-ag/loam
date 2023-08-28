@@ -10,18 +10,17 @@ export type Field = {
   externalFieldPrefill?: string;
 };
 
-export type ArrayInput = {
-  label?: string;
+export type ArrayFields = {
   type: 'array';
-  required?: boolean;
+  label?: string;
   conditionals?: Record<string, string>;
   externalConditionals?: Record<string, [string, boolean]>;
   fields: ArrayField[];
 };
 
 export type ArrayField = {
-  fieldName: string;
   defaultValue: string;
+  fieldName: string;
   label: string;
   type: 'text' | 'textarea' | 'select' | 'radio' | 'date' | 'fileUplaod';
   required?: boolean;
@@ -30,4 +29,4 @@ export type ArrayField = {
   externalFieldPrefill?: string;
 };
 
-export type SubsectionFieldParams = Record<string, Field>;
+export type SubsectionFieldParams = Record<string, Field | ArrayFields>;

@@ -186,49 +186,50 @@ export const VERRA_1_04: SubsectionFieldParams = {
   }
 };
 
-// export const VERRA_1_05: SubsectionFieldParams = {
-//   verra_1_05_contact: {
-//     type: 'array',
-//     fields: [
-//       {
-//         fieldName: 'verra_1_05_contact_orgname',
-//         defaultValue: '',
-//         label: 'Organization name',
-//         type: 'text'
-//       },
-//       {
-//         fieldName: 'verra_1_05_contact_person',
-//         defaultValue: '',
-//         label: 'Contact person',
-//         type: 'text'
-//       },
-//       {
-//         fieldName: 'verra_1_05_contact_title',
-//         defaultValue: '',
-//         label: 'Title',
-//         type: 'text'
-//       },
-//       {
-//         fieldName: 'verra_1_05_contact_address',
-//         defaultValue: '',
-//         label: 'Address',
-//         type: 'text'
-//       },
-//       {
-//         fieldName: 'verra_1_05_contact_phone',
-//         defaultValue: '',
-//         label: 'Telephone',
-//         type: 'text'
-//       },
-//       {
-//         fieldName: 'verra_1_05_contact_email',
-//         defaultValue: '',
-//         label: 'Email',
-//         type: 'text'
-//       }
-//     ]
-//   }
-// };
+export const VERRA_1_05: SubsectionFieldParams = {
+  verra_1_05_contact: {
+    label: 'Project Proponent',
+    type: 'array',
+    fields: [
+      {
+        fieldName: 'verra_1_05_contact_orgname',
+        defaultValue: '',
+        label: 'Organization name',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_05_contact_person',
+        defaultValue: '',
+        label: 'Contact person',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_05_contact_title',
+        defaultValue: '',
+        label: 'Title',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_05_contact_address',
+        defaultValue: '',
+        label: 'Address',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_05_contact_phone',
+        defaultValue: '',
+        label: 'Telephone',
+        type: 'text'
+      },
+      {
+        fieldName: 'verra_1_05_contact_email',
+        defaultValue: '',
+        label: 'Email',
+        type: 'text'
+      }
+    ]
+  }
+};
 
 // export const VERRA_1_06: SubsectionFieldParams = {
 //   verra_1_06_: {
@@ -693,7 +694,7 @@ export const SECTION_1_VERRA_FIELDS: Record<string, SubsectionFieldParams> = {
   verra_1_02: VERRA_1_02,
   verra_1_03: VERRA_1_03,
   verra_1_04: VERRA_1_04,
-  // verra_1_05: VERRA_1_05,
+  verra_1_05: VERRA_1_05,
   // verra_1_06: VERRA_1_06,
   verra_1_07: VERRA_1_07,
   verra_1_08: VERRA_1_08,
