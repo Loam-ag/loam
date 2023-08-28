@@ -12,8 +12,10 @@ import {
   Field,
   SubsectionFieldParams
 } from '@/constants/verra/types';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 
 export type SubsectionFieldDefaultValues = Record<
   string,
@@ -25,6 +27,9 @@ export default function PddSection({
 }: {
   params: { section: string };
 }) {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+  const supabase = createClientComponentClient();
   const {
     register,
     unregister,
@@ -40,34 +45,98 @@ export default function PddSection({
   const onSubmit: SubmitHandler<any> = (data) => console.log(data);
 
   useEffect(() => {
-    const VerraSubsection = SECTIONS_VERRA_FIELDS[params.section];
-    setFields(VerraSubsection);
+    const getSavedResponses = async () => {
+      const VerraSubsection = SECTIONS_VERRA_FIELDS[params.section];
+      setFields(VerraSubsection);
 
-    // fetch from database
+      let savedFieldResponses: SubsectionFieldDefaultValues | null;
 
-    // if nothing in database
-    const fieldDefaultValues: SubsectionFieldDefaultValues = Object.keys(
-      VerraSubsection
-    ).reduce((obj, key) => {
-      if (VerraSubsection[key].type !== 'array') {
-        const nonDynamicField = VerraSubsection[key] as Field;
-        obj[key] = nonDynamicField.defaultValue;
-      } else {
-        const arrayFields = VerraSubsection[key] as ArrayFields;
-        obj[key] = [
-          arrayFields.fields.reduce((acc: Record<string, string>, field) => {
-            acc[field.fieldName] = field.defaultValue;
-            return acc;
-          }, {})
-        ];
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      // Fetch the saved field response data from Supabase
+      try {
+        const { data, error } = await supabase
+          .from('verra_pdds')
+          .select(params.section)
+          .eq('id', id)
+          .eq('user_id', session?.user.id)
+          .single();
+        if (error) {
+          throw new Error('Getting saved responses failed');
+        }
+        if (data) {
+          const tempData: any = data;
+          savedFieldResponses = tempData[params.section];
+        }
+      } catch (error) {
+        console.error(error); // Handle any error that occurred
       }
-      return obj;
-    }, {} as SubsectionFieldDefaultValues);
-    reset(fieldDefaultValues);
+
+      // Set the default values by checking if exists in DB. If not, then use hardcoded default value.
+      const fieldDefaultValues: SubsectionFieldDefaultValues = Object.keys(
+        VerraSubsection
+      ).reduce((obj, key) => {
+        if (VerraSubsection[key].type !== 'array') {
+          if (savedFieldResponses && savedFieldResponses[key]) {
+            obj[key] = savedFieldResponses[key];
+          } else {
+            const nonDynamicField = VerraSubsection[key] as Field;
+            obj[key] = nonDynamicField.defaultValue;
+          }
+        } else {
+          // modify to support changes to the form down the line
+          if (savedFieldResponses && savedFieldResponses[key]) {
+            obj[key] = savedFieldResponses[key];
+          } else {
+            const arrayFields = VerraSubsection[key] as ArrayFields;
+            obj[key] = [
+              arrayFields.fields.reduce(
+                (acc: Record<string, string>, field) => {
+                  acc[field.fieldName] = field.defaultValue;
+                  return acc;
+                },
+                {}
+              )
+            ];
+          }
+        }
+        return obj;
+      }, {} as SubsectionFieldDefaultValues);
+
+      console.log(fieldDefaultValues);
+      reset(fieldDefaultValues);
+    };
+    getSavedResponses();
   }, []);
-  const handleSave = () => {
-    console.log(getValues());
+
+  const performUpsert = async (fieldValues: FieldValues) => {
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+    try {
+      const { data, error } = await supabase
+        .from('verra_pdds')
+        .upsert({
+          id: id,
+          user_id: session?.user.id,
+          [params.section]: fieldValues
+        })
+        .select();
+      if (error) {
+        throw new Error('Upsert failed');
+      }
+    } catch (error) {
+      console.error(error); // Handle any error that occurred
+    }
   };
+
+  const handleSave = async () => {
+    const fieldValues = getValues();
+    await performUpsert(fieldValues);
+  };
+
   return (
     <div className="flex flex-row w-full gap-4">
       {fields && (

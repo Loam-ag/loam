@@ -2,7 +2,7 @@
 
 import { Subsection } from '@/constants/verra/Sections';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
 type SectionDropdownProps = {
@@ -19,6 +19,12 @@ export default function SectionDropdown({
   const [isSubsectionDropdownVisible, setIsSubsectionDropdownVisible] =
     useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+
+  if (!id) {
+    return <></>;
+  }
   return (
     <div>
       <div className="border-b-2 border-loam_3 mx-4">
@@ -43,7 +49,7 @@ export default function SectionDropdown({
           {subsections.map((subsection, index) => (
             <Link
               key={subsection.name}
-              href={`/dashboard/pdd-gen/${subsection.id}`}
+              href={`/dashboard/pdd-gen/${subsection.id}?id=${id}`}
               className={`text-black mx-6 text-[16px] text-left block ${
                 index === subsections.length - 1 ? '' : 'border-b-2'
               } px-4 py-4 ${
