@@ -101,7 +101,7 @@ export const VERRA_3_03: SubsectionFieldParams = {
   verra_3_03_CO2_baseline_justification: {
     defaultValue: '',
     label: 'Justification/Explanation',
-    type: 'radio',
+    type: 'textarea',
     options: ['Yes', 'No']
   },
   verra_3_03_CH4_baseline: {
@@ -113,7 +113,7 @@ export const VERRA_3_03: SubsectionFieldParams = {
   verra_3_03_CH4_baseline_justification: {
     defaultValue: '',
     label: 'Justification/Explanation',
-    type: 'radio',
+    type: 'textarea',
     options: ['Yes', 'No']
   },
   verra_3_03_N2O_baseline: {
@@ -125,7 +125,7 @@ export const VERRA_3_03: SubsectionFieldParams = {
   verra_3_03_N2O_baseline_justification: {
     defaultValue: '',
     label: 'Justification/Explanation',
-    type: 'radio',
+    type: 'textarea',
     options: ['Yes', 'No']
   },
   verra_3_03_other_baseline: {
@@ -137,7 +137,7 @@ export const VERRA_3_03: SubsectionFieldParams = {
   verra_3_03_other_baseline_justification: {
     defaultValue: '',
     label: 'Justification/Explanation',
-    type: 'radio',
+    type: 'textarea',
     options: ['Yes', 'No']
   },
   verra_3_03_CO2_project: {
@@ -149,7 +149,7 @@ export const VERRA_3_03: SubsectionFieldParams = {
   verra_3_03_CO2_project_justification: {
     defaultValue: '',
     label: 'Justification/Explanation',
-    type: 'radio',
+    type: 'textarea',
     options: ['Yes', 'No']
   },
   verra_3_03_CH4_project: {
@@ -161,7 +161,7 @@ export const VERRA_3_03: SubsectionFieldParams = {
   verra_3_03_CH4_project_justification: {
     defaultValue: '',
     label: 'Justification/Explanation',
-    type: 'radio',
+    type: 'textarea',
     options: ['Yes', 'No']
   },
   verra_3_03_N2O_project: {
@@ -173,7 +173,7 @@ export const VERRA_3_03: SubsectionFieldParams = {
   verra_3_03_N2O_project_justification: {
     defaultValue: '',
     label: 'Justification/Explanation',
-    type: 'radio',
+    type: 'textarea',
     options: ['Yes', 'No']
   },
   verra_3_03_other_project: {
@@ -185,7 +185,7 @@ export const VERRA_3_03: SubsectionFieldParams = {
   verra_3_03_other_project_justification: {
     defaultValue: '',
     label: 'Justification/Explanation',
-    type: 'radio',
+    type: 'textarea',
     options: ['Yes', 'No']
   }
 };

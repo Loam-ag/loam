@@ -6,7 +6,7 @@ import AiAvatar from '@/components/icons/AiAvatar';
 import CopyIcon from '@/components/icons/CopyIcon';
 import EditIcon from '@/components/icons/EditIcon';
 import TrashIcon from '@/components/icons/TrashIcon';
-import { SECTION_1_VERRA_FIELDS } from '@/constants/verra/Section1';
+import { SECTIONS_VERRA_FIELDS } from '@/constants/verra/SectionFields';
 import {
   ArrayFields,
   Field,
@@ -40,7 +40,7 @@ export default function PddSection({
   const onSubmit: SubmitHandler<any> = (data) => console.log(data);
 
   useEffect(() => {
-    const VerraSubsection = SECTION_1_VERRA_FIELDS[params.section];
+    const VerraSubsection = SECTIONS_VERRA_FIELDS[params.section];
     setFields(VerraSubsection);
 
     // fetch from database

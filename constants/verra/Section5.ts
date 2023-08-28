@@ -202,7 +202,7 @@ export const VERRA_5_03: SubsectionFieldParams = {
   }
 };
 
-export const SECTION_4_VERRA_FIELDS: Record<string, SubsectionFieldParams> = {
+export const SECTION_5_VERRA_FIELDS: Record<string, SubsectionFieldParams> = {
   verra_5_01: VERRA_5_01,
   verra_5_02: VERRA_5_02,
   verra_5_03: VERRA_5_03
