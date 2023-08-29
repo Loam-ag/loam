@@ -33,6 +33,7 @@ export default function Sections() {
             sectionNumber={section.number}
             sectionName={section.name}
             subsections={section.subsections}
+            hrefValue={section.hrefValue}
           />
         ))}
         <div className="border-b-2 border-loam_3 mx-4">

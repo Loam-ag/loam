@@ -9,6 +9,7 @@ export type Section = {
   number: string;
   name: string;
   subsections: Subsection[];
+  hrefValue?: string;
 };
 
 export const VERRA_SECTIONS: Section[] = [
@@ -16,7 +17,8 @@ export const VERRA_SECTIONS: Section[] = [
     id: 'verra_0',
     number: '0.',
     name: 'Get Started',
-    subsections: []
+    subsections: [],
+    hrefValue: '/dashboard/pdd-gen/verra_0_01'
   },
   {
     id: 'verra_1',
@@ -232,6 +234,7 @@ export const VERRA_SECTIONS: Section[] = [
     id: 'verra_appendix',
     number: '',
     name: 'Appendix',
-    subsections: []
+    subsections: [],
+    hrefValue: '/dashboard/pdd-gen/verra_appendix'
   }
 ];

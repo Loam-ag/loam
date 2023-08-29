@@ -9,12 +9,14 @@ type SectionDropdownProps = {
   sectionNumber: string;
   sectionName: string;
   subsections: Subsection[];
+  hrefValue?: string;
 };
 
 export default function SectionDropdown({
   sectionNumber,
   sectionName,
-  subsections
+  subsections,
+  hrefValue
 }: SectionDropdownProps) {
   const [isSubsectionDropdownVisible, setIsSubsectionDropdownVisible] =
     useState(false);
@@ -28,21 +30,37 @@ export default function SectionDropdown({
   return (
     <div>
       <div className="border-b-2 border-loam_3 mx-4">
-        <button
-          onClick={() =>
-            setIsSubsectionDropdownVisible(!isSubsectionDropdownVisible)
-          }
-          className="text-black text-[18px] mx-6 py-6 block text-left "
-        >
-          {sectionNumber ? (
-            <div className="flex flex-row gap-2">
-              <div>{sectionNumber}</div>
-              <div>{sectionName}</div>
-            </div>
-          ) : (
-            <div className="flex flex-row">{sectionName}</div>
-          )}
-        </button>
+        {hrefValue ? (
+          <Link
+            href={`${hrefValue}?id=${id}`}
+            className="text-black text-[18px] mx-6 py-6 block text-left "
+          >
+            {sectionNumber ? (
+              <div className="flex flex-row gap-2">
+                <div>{sectionNumber}</div>
+                <div>{sectionName}</div>
+              </div>
+            ) : (
+              <div className="flex flex-row">{sectionName}</div>
+            )}
+          </Link>
+        ) : (
+          <button
+            onClick={() =>
+              setIsSubsectionDropdownVisible(!isSubsectionDropdownVisible)
+            }
+            className="text-black text-[18px] mx-6 py-6 block text-left "
+          >
+            {sectionNumber ? (
+              <div className="flex flex-row gap-2">
+                <div>{sectionNumber}</div>
+                <div>{sectionName}</div>
+              </div>
+            ) : (
+              <div className="flex flex-row">{sectionName}</div>
+            )}
+          </button>
+        )}
       </div>
       {isSubsectionDropdownVisible && subsections.length > 0 && (
         <div className="bg-white overflow-y-auto">

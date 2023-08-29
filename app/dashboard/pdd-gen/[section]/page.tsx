@@ -131,6 +131,7 @@ export default function PddSection({
 
   const handleSave = async () => {
     const fieldValues = getValues();
+    console.log(fieldValues);
     await performUpsert(fieldValues);
   };
 
