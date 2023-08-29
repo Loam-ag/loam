@@ -31,7 +31,7 @@ export default function FieldArray({
 
   useEffect(() => {
     const transformedObject = arrayFields.fields.reduce(
-      (result: Record<string, string>, item) => {
+      (result: Record<string, string | string[]>, item) => {
         result[item.fieldName] = item.defaultValue;
         return result;
       },
@@ -47,7 +47,7 @@ export default function FieldArray({
             <label className="block text-black mb-4 text-[16px] font-semibold text-lg underline">
               {arrayFields.label} #{index + 1}
             </label>
-            {Object.keys(field).map((arrayFieldName) => {
+            {Object.keys(defaultValues).map((arrayFieldName) => {
               const arrayFieldParams =
                 arrayFieldName !== 'id'
                   ? arrayFields.fields.find(
@@ -66,7 +66,7 @@ export default function FieldArray({
                 )
               );
             })}
-            {index > 0 && (
+            {fields.length > 1 && (
               <button
                 onClick={() => remove(index)}
                 className="bg-black text-white font-bold py-2 px-4 rounded mb-4"

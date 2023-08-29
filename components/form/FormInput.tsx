@@ -118,6 +118,31 @@ export default function FormInput({
         />
       );
       break;
+    case 'checkbox':
+      inputField = (
+        <>
+          {options?.map((option) => (
+            <div key={option}>
+              <input
+                {...register(fieldName, {
+                  required: required === false ? false : true
+                })}
+                className="mr-2"
+                type="checkbox"
+                value={option}
+                readOnly={readOnly}
+              />
+              <label
+                className="text-black whitespace-pre-line"
+                style={{ listStyleType: 'disc', marginLeft: '1em' }}
+              >
+                {option}
+              </label>
+            </div>
+          ))}
+        </>
+      );
+      break;
     default:
       inputField = (
         <input

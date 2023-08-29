@@ -1,7 +1,14 @@
 export type Field = {
-  defaultValue: string;
+  defaultValue: string | string[];
   label: string;
-  type: 'text' | 'textarea' | 'select' | 'radio' | 'date' | 'fileUplaod';
+  type:
+    | 'text'
+    | 'textarea'
+    | 'select'
+    | 'radio'
+    | 'date'
+    | 'fileUplaod'
+    | 'checkbox';
   required?: boolean;
   readOnly?: boolean;
   options?: string[];
@@ -19,10 +26,17 @@ export type ArrayFields = {
 };
 
 export type ArrayField = {
-  defaultValue: string;
+  defaultValue: string | string[];
   fieldName: string;
   label: string;
-  type: 'text' | 'textarea' | 'select' | 'radio' | 'date' | 'fileUplaod';
+  type:
+    | 'text'
+    | 'textarea'
+    | 'select'
+    | 'radio'
+    | 'date'
+    | 'fileUplaod'
+    | 'checkbox';
   required?: boolean;
   readOnly?: boolean;
   options?: string[];

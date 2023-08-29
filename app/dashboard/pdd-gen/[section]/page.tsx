@@ -19,7 +19,7 @@ import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 
 export type SubsectionFieldDefaultValues = Record<
   string,
-  string | Record<string, string>[]
+  string | string[] | Record<string, string | string[]>[]
 >;
 
 export default function PddSection({
@@ -43,7 +43,6 @@ export default function PddSection({
   const watchFields = watch();
   const [fields, setFields] = useState<SubsectionFieldParams>();
   const onSubmit: SubmitHandler<any> = (data) => console.log(data);
-
   useEffect(() => {
     const getSavedResponses = async () => {
       const VerraSubsection = SECTIONS_VERRA_FIELDS[params.section];
@@ -86,14 +85,14 @@ export default function PddSection({
             obj[key] = nonDynamicField.defaultValue;
           }
         } else {
-          // modify to support changes to the form down the line
+          // modify to support possible changes to the dynamic form question list
           if (savedFieldResponses && savedFieldResponses[key]) {
             obj[key] = savedFieldResponses[key];
           } else {
             const arrayFields = VerraSubsection[key] as ArrayFields;
             obj[key] = [
               arrayFields.fields.reduce(
-                (acc: Record<string, string>, field) => {
+                (acc: Record<string, string | string[]>, field) => {
                   acc[field.fieldName] = field.defaultValue;
                   return acc;
                 },
@@ -104,8 +103,6 @@ export default function PddSection({
         }
         return obj;
       }, {} as SubsectionFieldDefaultValues);
-
-      console.log(fieldDefaultValues);
       reset(fieldDefaultValues);
     };
     getSavedResponses();

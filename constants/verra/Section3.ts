@@ -77,18 +77,17 @@ export const VERRA_3_02: SubsectionFieldParams = {
     type: 'radio',
     options: ['Yes', 'No'],
     conditionals: { verra_3_02_hydro: 'Yes' }
+  },
+  verra_3_02_clause5: {
+    defaultValue: [],
+    label: 'Clause 5: Do any of the following apply to this project',
+    type: 'checkbox',
+    options: [
+      'Project activities involve switching from fossil fuels to renewable energy sources at the site of the project activity',
+      'Project activities involve biomass fired power plants/units',
+      'N/A'
+    ]
   }
-  // ADD CHECKBOX
-  // verra_3_02_clause5: {
-  //   defaultValue: [],
-  //   label: 'Clause 5: Do any of the following apply to this project',
-  //   type: 'checkbox',
-  //   options: [
-  //     'Project activities involve switching from fossil fuels to renewable energy sources at the site of the project activity',
-  //     'Project activities involve biomass fired power plants/units',
-  //     'N/A'
-  //   ],
-  // }
 };
 
 export const VERRA_3_03: SubsectionFieldParams = {
