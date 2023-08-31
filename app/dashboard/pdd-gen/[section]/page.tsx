@@ -13,6 +13,7 @@ import {
   SubsectionFieldParams
 } from '@/constants/verra/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useChat } from 'ai/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
@@ -27,9 +28,10 @@ export default function PddSection({
 }: {
   params: { section: string };
 }) {
+  const supabase = createClientComponentClient();
+  const [userId, setUserId] = useState('');
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
-  const supabase = createClientComponentClient();
   const {
     register,
     unregister,
@@ -43,6 +45,15 @@ export default function PddSection({
   const watchFields = watch();
   const [fields, setFields] = useState<SubsectionFieldParams>();
   const onSubmit: SubmitHandler<any> = (data) => console.log(data);
+  const { messages, append } = useChat({
+    body: {
+      subsectionId: params.section,
+      userId: userId,
+      subsectionPrompt:
+        "You are an AI that doesn't know how to do anything besides convert the human's input into outputs like the examples below. For context, these outputs are for helping the human create a Project Description Document for Verra's Verified Carbon Standard. Based on the user's inputs, organize each field label and value in a professionally worded paragraph. Fix any grammar mistakes you find as well:"
+    }
+  });
+
   useEffect(() => {
     const getSavedResponses = async () => {
       const VerraSubsection = SECTIONS_VERRA_FIELDS[params.section];
@@ -53,7 +64,7 @@ export default function PddSection({
       const {
         data: { session }
       } = await supabase.auth.getSession();
-
+      setUserId(session?.user.id || '');
       // Fetch the saved field response data from Supabase
       try {
         const { data, error } = await supabase
@@ -109,15 +120,12 @@ export default function PddSection({
   }, []);
 
   const performUpsert = async (fieldValues: FieldValues) => {
-    const {
-      data: { session }
-    } = await supabase.auth.getSession();
     try {
       const { data, error } = await supabase
         .from('verra_pdds')
         .upsert({
           id: id,
-          user_id: session?.user.id,
+          user_id: userId,
           [params.section]: fieldValues
         })
         .select();
@@ -131,7 +139,6 @@ export default function PddSection({
 
   const handleSave = async () => {
     const fieldValues = getValues();
-    console.log(fieldValues);
     await performUpsert(fieldValues);
   };
 
@@ -145,6 +152,7 @@ export default function PddSection({
               if (field.type !== 'array') {
                 return (
                   <FormInput
+                    key={fieldName}
                     register={register}
                     unregister={unregister}
                     getValues={getValues}
@@ -179,8 +187,8 @@ export default function PddSection({
           </button>
         </div>
       )}
-      <div className="w-1/2 bg-loam_1 p-4 overflow-y-auto flex flex-row h-[90vh] px-4">
-        {true ? (
+      {true ? (
+        <div className="w-1/2 bg-loam_1 p-4 overflow-y-auto flex flex-row h-[90vh] px-4">
           <>
             <div className="flex flex-col items-center gap-6 mt-4">
               <AiAvatar />
@@ -194,10 +202,10 @@ export default function PddSection({
             </div>
             <p></p>
           </>
-        ) : (
-          <></>
-        )}
-      </div>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

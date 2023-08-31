@@ -120,9 +120,9 @@ export const VERRA_1_02: SubsectionFieldParams = {
       verra_1_02_afolu: 'Wetlands Restoration and Conservation (WRC)'
     }
   },
-  verra_1_02_activity: {
+  verra_1_02_methodology: {
     defaultValue: '',
-    label: 'Select activity type',
+    label: 'Select methodology',
     type: 'select',
     options: ['ACM0002']
   },
@@ -341,8 +341,7 @@ export const VERRA_1_10: SubsectionFieldParams = {
   },
   verra_1_10_scale: {
     defaultValue: '',
-    label:
-      'The estimated annual GHG emission reductions/removals of the project are:',
+    label: 'Project Scale:',
     type: 'radio',
     options: [
       'Project (Less than or equal to 300,000 tonnes of CO2e per year)',

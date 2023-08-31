@@ -7,7 +7,6 @@ import {
   ChatCompletionRequestMessage
 } from 'openai-edge';
 
-// Create an OpenAI API client (that's edge friendly!)
 const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY
 });
@@ -17,27 +16,27 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
   const supabase = createRouteHandlerClient({ cookies });
-  // Extract the `messages` from the body of the request
-  const { messages, subsection_id, section_prompt, user_id } = await req.json();
+  const { messages, subsectionId, subsectionPrompt, userId } = await req.json();
   const initialMessage = [
-    { role: 'system', content: section_prompt }
+    { role: 'system', content: subsectionPrompt }
   ] as Array<ChatCompletionRequestMessage>;
-  // Ask OpenAI for a streaming chat completion given the prompt
+
   const response = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
     stream: true,
     messages: initialMessage.concat(messages)
   });
-  // Convert the response into a friendly text-stream
+
   const stream = OpenAIStream(response, {
     onCompletion: async (completion: string) => {
-      const { data, error } = await supabase.from('form_ai_outputs').upsert({
-        subsection_id: subsection_id,
-        user_id: user_id,
-        output_value: completion
-      });
+      // const { data, error } = await supabase.from('form_ai_outputs').upsert({
+      //   subsection_id: subsection_id,
+      //   user_id: user_id,
+      //   output_value: completion
+      // });
+      console.log(completion);
     }
   });
-  // Respond with the stream
+
   return new StreamingTextResponse(stream);
 }
