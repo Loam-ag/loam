@@ -16,7 +16,9 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
   const supabase = createRouteHandlerClient({ cookies });
-  const { messages, subsectionId, subsectionPrompt, userId } = await req.json();
+  const { messages, subsectionId, subsectionPrompt, userId, id } =
+    await req.json();
+  console.log(messages);
   const initialMessage = [
     { role: 'system', content: subsectionPrompt }
   ] as Array<ChatCompletionRequestMessage>;
@@ -29,12 +31,17 @@ export async function POST(req: Request) {
 
   const stream = OpenAIStream(response, {
     onCompletion: async (completion: string) => {
-      // const { data, error } = await supabase.from('form_ai_outputs').upsert({
-      //   subsection_id: subsection_id,
-      //   user_id: user_id,
-      //   output_value: completion
-      // });
-      console.log(completion);
+      const { data, error } = await supabase
+        .from('verra_pdds_ai_outputs')
+        .upsert({
+          id: id,
+          user_id: userId,
+          [subsectionId]: completion
+        })
+        .select();
+      if (error) {
+        throw new Error('Upsert completion failed');
+      }
     }
   });
 

@@ -2,6 +2,7 @@ export type Subsection = {
   id: string;
   number: string;
   name: string;
+  hasAiOutput?: boolean;
 };
 
 export type Section = {
@@ -28,7 +29,8 @@ export const VERRA_SECTIONS: Section[] = [
       {
         id: 'verra_1_01',
         number: '1.01',
-        name: 'Summary Description of the Project'
+        name: 'Summary Description of the Project',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_02',
@@ -38,12 +40,14 @@ export const VERRA_SECTIONS: Section[] = [
       {
         id: 'verra_1_03',
         number: '1.03',
-        name: 'Project Eligibility'
+        name: 'Project Eligibility',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_04',
         number: '1.04',
-        name: 'Project Design'
+        name: 'Project Design',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_05',
@@ -58,7 +62,8 @@ export const VERRA_SECTIONS: Section[] = [
       {
         id: 'verra_1_07',
         number: '1.07',
-        name: 'Project Ownership'
+        name: 'Project Ownership',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_08',
@@ -78,37 +83,44 @@ export const VERRA_SECTIONS: Section[] = [
       {
         id: 'verra_1_11',
         number: '1.11',
-        name: 'Description of the Project Activity'
+        name: 'Description of the Project Activity',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_12',
         number: '1.12',
-        name: 'Project Location'
+        name: 'Project Location',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_13',
         number: '1.13',
-        name: 'Conditions Prior to Project Initiation'
+        name: 'Conditions Prior to Project Initiation',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_14',
         number: '1.14',
-        name: 'Compliance with Laws, Statutes and Other Regulatory Frameworks'
+        name: 'Compliance with Laws, Statutes and Other Regulatory Frameworks',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_15',
         number: '1.15',
-        name: 'Participation under Other GHG Programs'
+        name: 'Participation under Other GHG Programs',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_16',
         number: '1.16',
-        name: 'Other Forms of Credit'
+        name: 'Other Forms of Credit',
+        hasAiOutput: true
       },
       {
         id: 'verra_1_17',
         number: '1.17',
-        name: 'Additional Information Relevant to the Project'
+        name: 'Additional Information Relevant to the Project',
+        hasAiOutput: true
       }
     ]
   },
@@ -120,27 +132,32 @@ export const VERRA_SECTIONS: Section[] = [
       {
         id: 'verra_2_01',
         number: '2.01',
-        name: 'No Net Harm'
+        name: 'No Net Harm',
+        hasAiOutput: true
       },
       {
         id: 'verra_2_02',
         number: '2.02',
-        name: 'Local Stakeholder Consultation'
+        name: 'Local Stakeholder Consultation',
+        hasAiOutput: true
       },
       {
         id: 'verra_2_03',
         number: '2.03',
-        name: 'Environmental Impact'
+        name: 'Environmental Impact',
+        hasAiOutput: true
       },
       {
         id: 'verra_2_04',
         number: '2.04',
-        name: 'Public Comments'
+        name: 'Public Comments',
+        hasAiOutput: true
       },
       {
         id: 'verra_2_05',
         number: '2.05',
-        name: 'AFOLU-Specific Safeguards'
+        name: 'AFOLU-Specific Safeguards',
+        hasAiOutput: true
       }
     ]
   },
@@ -157,7 +174,8 @@ export const VERRA_SECTIONS: Section[] = [
       {
         id: 'verra_3_02',
         number: '3.02',
-        name: 'Applicability of Methodology'
+        name: 'Applicability of Methodology',
+        hasAiOutput: true
       },
       {
         id: 'verra_3_03',
@@ -167,17 +185,20 @@ export const VERRA_SECTIONS: Section[] = [
       {
         id: 'verra_3_04',
         number: '3.04',
-        name: 'Baseline Scenario'
+        name: 'Baseline Scenario',
+        hasAiOutput: true
       },
       {
         id: 'verra_3_05',
         number: '3.05',
-        name: 'Additionality'
+        name: 'Additionality',
+        hasAiOutput: true
       },
       {
         id: 'verra_3_06',
         number: '3.06',
-        name: 'Methodology Deviations'
+        name: 'Methodology Deviations',
+        hasAiOutput: true
       }
     ]
   },
@@ -226,7 +247,8 @@ export const VERRA_SECTIONS: Section[] = [
       {
         id: 'verra_5_03',
         number: '5.03',
-        name: 'Monitoring Plan'
+        name: 'Monitoring Plan',
+        hasAiOutput: true
       }
     ]
   },

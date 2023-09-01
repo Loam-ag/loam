@@ -7,6 +7,7 @@ import CopyIcon from '@/components/icons/CopyIcon';
 import EditIcon from '@/components/icons/EditIcon';
 import TrashIcon from '@/components/icons/TrashIcon';
 import { SECTIONS_VERRA_FIELDS } from '@/constants/verra/SectionFields';
+import { VERRA_SECTIONS } from '@/constants/verra/Sections';
 import {
   ArrayFields,
   Field,
@@ -26,8 +27,17 @@ export type SubsectionFieldDefaultValues = Record<
 export default function PddSection({
   params
 }: {
-  params: { section: string };
+  params: { subsection: string };
 }) {
+  const [isCopied, setIsCopied] = useState(false);
+  const [isDeletePressed, setIsDeletePressed] = useState(false);
+  const sectionName = params.subsection.slice(0, -3);
+  const hasAiOutput = VERRA_SECTIONS.find((section) =>
+    section.id.includes(sectionName)
+  )?.subsections.find((subsection) =>
+    subsection.id.includes(params.subsection)
+  )?.hasAiOutput;
+  const [aiOutput, setAiOutput] = useState('');
   const supabase = createClientComponentClient();
   const [userId, setUserId] = useState('');
   const searchParams = useSearchParams();
@@ -47,16 +57,22 @@ export default function PddSection({
   const onSubmit: SubmitHandler<any> = (data) => console.log(data);
   const { messages, append } = useChat({
     body: {
-      subsectionId: params.section,
+      id: id,
+      subsectionId: params.subsection,
       userId: userId,
       subsectionPrompt:
-        "You are an AI that doesn't know how to do anything besides convert the human's input into outputs like the examples below. For context, these outputs are for helping the human create a Project Description Document for Verra's Verified Carbon Standard. Based on the user's inputs, organize each field label and value in a professionally worded paragraph. Fix any grammar mistakes you find as well:"
+        "Based on the user's inputs, organize each field label and value in a professionally worded paragraph. Fix any grammar mistakes you find as well. To give context on what each field represented in the form, I will give the question associated with each field. After understanding the context of each field, convert the following user input represented as a json object into a professionally worded paragraph. If any user inputs don't make sense given the context of the field, identify the question they should reanswer with an appropriate response. For context, these outputs are for helping the human create a Project Description Document for Verra's Verified Carbon Standard:"
     }
   });
+  useEffect(() => {
+    if (isDeletePressed && messages.pop()?.role === 'assistant') {
+      setIsDeletePressed(false);
+    }
+  }, [messages]);
 
   useEffect(() => {
     const getSavedResponses = async () => {
-      const VerraSubsection = SECTIONS_VERRA_FIELDS[params.section];
+      const VerraSubsection = SECTIONS_VERRA_FIELDS[params.subsection];
       setFields(VerraSubsection);
 
       let savedFieldResponses: SubsectionFieldDefaultValues | null;
@@ -69,7 +85,7 @@ export default function PddSection({
       try {
         const { data, error } = await supabase
           .from('verra_pdds')
-          .select(params.section)
+          .select(params.subsection)
           .eq('id', id)
           .eq('user_id', session?.user.id)
           .single();
@@ -78,7 +94,25 @@ export default function PddSection({
         }
         if (data) {
           const tempData: any = data;
-          savedFieldResponses = tempData[params.section];
+          savedFieldResponses = tempData[params.subsection];
+        }
+      } catch (error) {
+        console.error(error); // Handle any error that occurred
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('verra_pdds_ai_outputs')
+          .select(params.subsection)
+          .eq('id', id)
+          .eq('user_id', session?.user.id)
+          .single();
+        if (error) {
+          throw new Error('Getting saved responses failed');
+        }
+        if (data) {
+          const tempData: any = data;
+          setAiOutput(tempData[params.subsection]);
         }
       } catch (error) {
         console.error(error); // Handle any error that occurred
@@ -126,7 +160,7 @@ export default function PddSection({
         .upsert({
           id: id,
           user_id: userId,
-          [params.section]: fieldValues
+          [params.subsection]: fieldValues
         })
         .select();
       if (error) {
@@ -137,9 +171,51 @@ export default function PddSection({
     }
   };
 
+  const handleGenerate = async () => {
+    const fieldValues = await handleSave();
+    // support dynamic fields for AI
+    let userInput =
+      Object.keys(fieldValues)
+        .map((key) => `${key}:${fields?.[key]?.label}\n`)
+        .join('') + JSON.stringify(fieldValues);
+    append({
+      content: userInput,
+      role: 'user'
+    });
+  };
+
   const handleSave = async () => {
     const fieldValues = getValues();
+    console.log(fieldValues);
     await performUpsert(fieldValues);
+    return fieldValues;
+  };
+
+  const deleteResponse = async () => {
+    try {
+      const { data: other, error: otherError } = await supabase
+        .from('verra_pdds_ai_outputs')
+        .upsert({
+          id: id,
+          user_id: userId,
+          [params.subsection]: ''
+        })
+        .select();
+      setIsDeletePressed(true);
+    } catch (error) {
+      console.error(error); // Handle any error that occurred
+    }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(
+      messages.filter((m) => m.role === 'assistant').pop()?.content || aiOutput
+    );
+
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
   };
 
   return (
@@ -173,11 +249,16 @@ export default function PddSection({
                 );
               }
             })}
-            <div className="flex flex-row float-right gap-4">
-              <button className="bg-black text-white font-bold py-2 mt-8 px-4 rounded">
-                Generate
-              </button>
-            </div>
+            {hasAiOutput && (
+              <div className="flex flex-row float-right gap-4">
+                <button
+                  className="bg-black text-white font-bold py-2 mt-8 px-4 rounded"
+                  onClick={handleGenerate}
+                >
+                  Generate
+                </button>
+              </div>
+            )}
           </form>
           <button
             onClick={handleSave}
@@ -187,20 +268,25 @@ export default function PddSection({
           </button>
         </div>
       )}
-      {true ? (
-        <div className="w-1/2 bg-loam_1 p-4 overflow-y-auto flex flex-row h-[90vh] px-4">
+      {hasAiOutput ? (
+        <div className="w-1/2 bg-loam_1 p-4 flex flex-row px-4">
           <>
             <div className="flex flex-col items-center gap-6 mt-4">
               <AiAvatar />
               <EditIcon />
-              <button>
-                <CopyIcon />
+              <button onClick={handleCopy}>
+                {isCopied ? <CopyIcon /> : <CopyIcon />}
               </button>
-              <button>
+              <button onClick={deleteResponse}>
                 <TrashIcon />
               </button>
             </div>
-            <p></p>
+            <p className="ml-6 text-black mt-4 whitespace-pre-line">
+              {isDeletePressed
+                ? ''
+                : messages.filter((m) => m.role === 'assistant').pop()
+                    ?.content || aiOutput}
+            </p>
           </>
         </div>
       ) : (

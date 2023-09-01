@@ -22,6 +22,17 @@ export default function ExportButton() {
       data: { session }
     } = await supabase.auth.getSession();
 
+    const { data: aiPdddData, error: aiPddError } = await supabase
+      .from('verra_pdds_ai_outputs')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', session?.user.id)
+      .single();
+
+    if (aiPddError) {
+      console.error('Error fetching row:', aiPddError);
+    }
+
     const { data: pddData, error } = await supabase
       .from('verra_pdds')
       .select('*')
@@ -122,52 +133,60 @@ export default function ExportButton() {
       }
     }
 
-    // loadFile('/template.docx', (error, content) => {
-    //   if (error) {
-    //     throw error;
-    //   }
-    //   var zip = new PizZip(content);
-    //   var doc = new Docxtemplater(zip, {
-    //     paragraphLoop: true,
-    //     linebreaks: true
-    //   });
-    //   doc.setData(combinedData);
-    //   try {
-    //     // render the document (replace all tag occurences
-    //     doc.render();
-    //   } catch (error: any) {
-    //     // The error thrown here contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
-    //     const replaceErrors = (key: any, value: any) => {
-    //       if (value) {
-    //         return Object.getOwnPropertyNames(value).reduce(
-    //           (error: any, key: any) => {
-    //             error[key] = value[key];
-    //             return error;
-    //           },
-    //           {}
-    //         );
-    //       }
-    //       return value;
-    //     };
-    //     console.log(JSON.stringify({ error: error }, replaceErrors));
+    const mergedData = {
+      ...aiPdddData,
+      ...transformedPddData
+    };
 
-    //     if (error.properties && error.properties.errors instanceof Array) {
-    //       const errorMessages = error.properties.errors
-    //         .map((error: any) => error.properties.explanation)
-    //         .join('\n');
-    //       console.log('errorMessages', errorMessages);
-    //       // errorMessages is a humanly readable message looking like this :
-    //       // 'The tag beginning with "foobar" is unopened'
-    //     }
-    //     throw error;
-    //   }
-    //   var out = doc.getZip().generate({
-    //     type: 'blob',
-    //     mimeType:
-    //       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    //   }); //Output the document using Data-URI
-    //   saveAs(out, 'output.docx');
-    // });
+    loadFile('/VERRA_DOC_TEMPLATE.docx', (error, content) => {
+      if (error) {
+        throw error;
+      }
+      var zip = new PizZip(content);
+      var doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+        nullGetter() {
+          return '';
+        }
+      });
+      doc.setData(mergedData);
+      try {
+        // render the document (replace all tag occurences
+        doc.render();
+      } catch (error: any) {
+        // The error thrown here contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
+        const replaceErrors = (key: any, value: any) => {
+          if (value) {
+            return Object.getOwnPropertyNames(value).reduce(
+              (error: any, key: any) => {
+                error[key] = value[key];
+                return error;
+              },
+              {}
+            );
+          }
+          return value;
+        };
+        console.log(JSON.stringify({ error: error }, replaceErrors));
+
+        if (error.properties && error.properties.errors instanceof Array) {
+          const errorMessages = error.properties.errors
+            .map((error: any) => error.properties.explanation)
+            .join('\n');
+          console.log('errorMessages', errorMessages);
+          // errorMessages is a humanly readable message looking like this :
+          // 'The tag beginning with "foobar" is unopened'
+        }
+        throw error;
+      }
+      var out = doc.getZip().generate({
+        type: 'blob',
+        mimeType:
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      }); //Output the document using Data-URI
+      saveAs(out, 'output.docx');
+    });
   };
   return (
     <div>
