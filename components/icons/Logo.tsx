@@ -10,7 +10,7 @@ const Logo = ({ color = 'black' }: Props) => (
     viewBox="0 0 108 28"
     fill="none"
   >
-    <g clip-path="url(#clip0_1288_19077)">
+    <g clipPath="url(#clip0_1288_19077)">
       <path
         d="M5.68296 21.9389V0.398193H0V22.4024L2.84148 27.6019H3.51462H5.68296H18.6036V21.9389H5.68296Z"
         fill="#F8F8F8"
