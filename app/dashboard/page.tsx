@@ -77,7 +77,7 @@ export default function Dashboard() {
       const formattedTime = date.toLocaleTimeString('en-US', timeOptions);
       return formattedTime;
     } else {
-      // It's on a different day, display month, day, year, and time
+      // It's on a different day, display month, day, year, and time.
       const dateTimeOptions = {
         year: 'numeric',
         month: 'long',
