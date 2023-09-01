@@ -68,7 +68,7 @@ export default function Dashboard() {
       date.getMonth() === now.getMonth() &&
       date.getFullYear() === now.getFullYear()
     ) {
-      // It's on the current day, display only the time
+      // It's on the current day, display only the time.
       const timeOptions = {
         hour: 'numeric',
         minute: '2-digit',
