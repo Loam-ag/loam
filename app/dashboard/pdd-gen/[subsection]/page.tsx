@@ -29,6 +29,7 @@ export default function PddSection({
 }: {
   params: { subsection: string };
 }) {
+  const supabase = createClientComponentClient();
   const [isCopied, setIsCopied] = useState(false);
   const [isDeletePressed, setIsDeletePressed] = useState(false);
   const sectionName = params.subsection.slice(0, -3);
@@ -38,7 +39,6 @@ export default function PddSection({
     subsection.id.includes(params.subsection)
   )?.hasAiOutput;
   const [aiOutput, setAiOutput] = useState('');
-  const supabase = createClientComponentClient();
   const [userId, setUserId] = useState('');
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
@@ -83,14 +83,17 @@ export default function PddSection({
       setUserId(session?.user.id || '');
       // Fetch the saved field response data from Supabase
       try {
+        console.log(params.subsection, id, session?.user.id);
         const { data, error } = await supabase
           .from('verra_pdds')
           .select(params.subsection)
           .eq('id', id)
           .eq('user_id', session?.user.id)
           .single();
+        console.log('data', data);
         if (error) {
-          throw new Error('Getting saved responses failed');
+          console.log(error);
+          // throw new Error('Getting saved responses failed');
         }
         if (data) {
           const tempData: any = data;
@@ -160,7 +163,8 @@ export default function PddSection({
         .upsert({
           id: id,
           user_id: userId,
-          [params.subsection]: fieldValues
+          [params.subsection]: fieldValues,
+          edited_at: new Date()
         })
         .select();
       if (error) {
@@ -186,7 +190,6 @@ export default function PddSection({
 
   const handleSave = async () => {
     const fieldValues = getValues();
-    console.log(fieldValues);
     await performUpsert(fieldValues);
     return fieldValues;
   };
@@ -241,6 +244,7 @@ export default function PddSection({
               } else {
                 return (
                   <FieldArray
+                    key={fieldName}
                     register={register}
                     arrayFields={field}
                     control={control}
@@ -269,7 +273,7 @@ export default function PddSection({
         </div>
       )}
       {hasAiOutput ? (
-        <div className="w-1/2 bg-loam_1 p-4 flex flex-row px-4">
+        <div className="w-1/2 bg-loam_1 p-4 flex flex-row px-4 h-screen">
           <>
             <div className="flex flex-col items-center gap-6 mt-4">
               <AiAvatar />

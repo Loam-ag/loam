@@ -75,8 +75,10 @@ export default function FormInput({
           className="w-full border rounded p-2 text-black"
         >
           <option value="">-- Select an option --</option>
-          {options?.map((option) => (
-            <option value={option}>{option}</option>
+          {options?.map((option, index) => (
+            <option key={index} value={option}>
+              {option}
+            </option>
           ))}
         </select>
       );
