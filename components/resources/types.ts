@@ -1,3 +1,5 @@
+import { Table } from '@tanstack/react-table';
+
 export interface ToggleButtonProps {
   label: string;
   selected: boolean;
@@ -9,10 +11,6 @@ export interface NavbarSelectProps {
   maxWidth?: string;
 }
 
-export interface TableProps {
-  data: any;
-}
-
 export interface MethodologyType {
   MethodologyID: string;
   MethodologyName: string;
@@ -22,4 +20,25 @@ export interface MethodologyType {
   HasTools: boolean;
 }
 
-export interface MethodologyTypeArray extends Array<MethodologyType> {}
+export interface InnerTableProps {
+  table: Table<MethodologyType>;
+}
+
+export interface TableProps {
+  data: Array<MethodologyType>;
+}
+
+export interface HeaderCellProps {
+  header: string;
+}
+export interface CellProps {
+  data: string;
+  fileIcon?: boolean;
+  downloadIcon?: boolean;
+  align?: string;
+  link?: string;
+}
+
+export interface DownloadProps {
+  link: string;
+}

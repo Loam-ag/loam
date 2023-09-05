@@ -5,7 +5,7 @@ import React from 'react';
 
 export const FilterBar = () => {
   return (
-    <div className="flex flex-row mb-1 p-3 gap-5">
+    <div className="flex flex-row p-3 gap-5">
       <FilterSelect
         label="Registry"
         options={['Verified Carbon Standard (VCS)']}

@@ -1,5 +1,7 @@
+import { Cell } from './Cell';
+import { HeaderCell } from './HeaderCell';
 import TableBody from './TableBody';
-import TableHeader from './TableHeader';
+import { TableHeader } from './TableHeader';
 import { MethodologyType, TableProps } from './types';
 import {
   useReactTable,
@@ -7,33 +9,41 @@ import {
   getCoreRowModel,
   flexRender
 } from '@tanstack/react-table';
-import React from 'react';
+import React, { FC } from 'react';
 
 const columnHelper = createColumnHelper<MethodologyType>();
 const columns = [
   columnHelper.display({
-    id: 'Icon'
+    id: 'FileIcon',
+    cell: () => <Cell fileIcon={true} data={''} />
   }),
   columnHelper.accessor('MethodologyName', {
-    header: 'Methodology'
+    cell: (info) => <Cell data={info.getValue()} />,
+    header: () => <div className="grow text-left">Name</div>
   }),
   columnHelper.accessor('MethodologyVersion', {
-    header: 'Version'
+    cell: (info) => <Cell data={info.getValue()} align="text-center" />,
+    header: () => <div className="grow text-center mr-5">Version</div>
   }),
   columnHelper.accessor('MethodologyHostedURL', {
-    id: 'PDF Icon'
+    id: 'PDF Icon',
+    header: () => <div className="grow text-left"></div>,
+    cell: (info) => (
+      <Cell downloadIcon={true} data={''} link={info.getValue()} />
+    )
   })
 ];
 
-const Table = (data: MethodologyType | any) => {
+export const Table: FC<TableProps> = ({ data }) => {
   const table = useReactTable({
-    data,
     columns,
+    data,
     getCoreRowModel: getCoreRowModel()
   });
   return (
-    <div className="grid grid-cols-12 grid-flow-row m-3 p-3 text-black border-[1px]"></div>
+    <table className="w-full text-black text-sm">
+      <TableHeader table={table} />
+      <TableBody table={table} />
+    </table>
   );
 };
-
-export default Table;
