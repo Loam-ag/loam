@@ -3,8 +3,11 @@
 import FieldArray from '@/components/form/FieldArray';
 import FormInput from '@/components/form/FormInput';
 import AiAvatar from '@/components/icons/AiAvatar';
+import CheckMarkIcon from '@/components/icons/CopyCheckedIcon';
+import CopyCheckedIcon from '@/components/icons/CopyCheckedIcon';
 import CopyIcon from '@/components/icons/CopyIcon';
 import EditIcon from '@/components/icons/EditIcon';
+import ThreeDotsAnimation from '@/components/icons/ThreeDotsAnimation';
 import TrashIcon from '@/components/icons/TrashIcon';
 import { SECTIONS_VERRA_FIELDS } from '@/constants/verra/SectionFields';
 import { VERRA_SECTIONS } from '@/constants/verra/Sections';
@@ -54,8 +57,8 @@ export default function PddSection({
   } = useForm({});
   const watchFields = watch();
   const [fields, setFields] = useState<SubsectionFieldParams>();
-  const onSubmit: SubmitHandler<any> = (data) => console.log(data);
-  const { messages, append } = useChat({
+  const onSubmit: SubmitHandler<any> = (data) => null;
+  const { messages, append, isLoading } = useChat({
     body: {
       id: id,
       subsectionId: params.subsection,
@@ -276,10 +279,13 @@ export default function PddSection({
         <div className="w-1/2 bg-loam_1 p-4 flex flex-row px-4 h-screen">
           <>
             <div className="flex flex-col items-center gap-6 mt-4">
-              <AiAvatar />
+              <div className="flex flex-col items-center">
+                <AiAvatar className={isLoading ? '' : 'mb-6'} />
+                {isLoading && <ThreeDotsAnimation className="h-6 w-6" />}
+              </div>
               <EditIcon />
               <button onClick={handleCopy}>
-                {isCopied ? <CopyIcon /> : <CopyIcon />}
+                {isCopied ? <CheckMarkIcon /> : <CopyIcon />}
               </button>
               <button onClick={deleteResponse}>
                 <TrashIcon />

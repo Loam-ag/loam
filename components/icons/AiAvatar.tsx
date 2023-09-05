@@ -1,10 +1,15 @@
-const AiAvatar = () => (
+interface AiAvatarProps {
+  className?: string;
+}
+
+const AiAvatar = ({ className }: AiAvatarProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="30"
     height="30"
     viewBox="0 0 30 30"
     fill="none"
+    className={className}
   >
     <circle cx="15" cy="15" r="15" fill="white" />
     <path

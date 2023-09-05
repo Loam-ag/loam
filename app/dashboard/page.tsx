@@ -1,6 +1,7 @@
 'use client';
 
 import CopyIcon from '@/components/icons/CopyIcon';
+import OpenArrowIcon from '@/public/OpenArrowIcon';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -114,7 +115,7 @@ export default function Dashboard() {
               <td className="w-1/3">{getTime(pdd.edited_at)}</td>
               <td>
                 <Link href={`/dashboard/pdd-gen/verra_0_01?id=${pdd.id}`}>
-                  <CopyIcon />
+                  <OpenArrowIcon />
                 </Link>
               </td>
             </tr>
