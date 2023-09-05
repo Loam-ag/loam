@@ -29,7 +29,9 @@ export interface TableProps {
 }
 
 export interface HeaderCellProps {
-  header: string;
+  header: any;
+  desc: boolean | undefined;
+  style?: string;
 }
 export interface CellProps {
   data: string;
@@ -42,3 +44,5 @@ export interface CellProps {
 export interface DownloadProps {
   link: string;
 }
+
+export type SortDirection = 'asc' | 'desc';

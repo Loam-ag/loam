@@ -5,7 +5,7 @@ import AccountIcon from '@/components/icons/AccountIcon';
 import HomeIcon from '@/components/icons/HomeIcon';
 import Logo from '@/components/icons/Logo';
 import PddWritingIcon from '@/components/icons/PddWritingIcon';
-import ResourcesIcon from '@/components/icons/ResourcesIcon';
+import ResourcesIcon from '@/components/resources/icons/ResourcesIcon';
 import {
   createClientComponentClient,
   User

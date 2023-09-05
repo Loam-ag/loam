@@ -1,5 +1,5 @@
-import { DownloadIcon } from '../icons/DownloadIcon';
 import FileIcon from '../icons/FileIcon';
+import { DownloadIcon } from './icons/DownloadIcon';
 import { CellProps as Props } from './types';
 import React, { FC } from 'react';
 

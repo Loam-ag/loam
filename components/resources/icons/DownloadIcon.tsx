@@ -1,4 +1,4 @@
-import { DownloadProps as Props } from '../resources/types';
+import { DownloadProps as Props } from '../types';
 import { FC } from 'react';
 
 export const DownloadIcon: FC<Props> = ({ link }) => {

@@ -1,5 +1,5 @@
-import { SearchIcon } from '../icons/SearchIcon';
 import { SEARCH_BAR_WIDTH } from './constants';
+import { SearchIcon } from './icons/SearchIcon';
 import React from 'react';
 
 export const SearchBar = () => {
