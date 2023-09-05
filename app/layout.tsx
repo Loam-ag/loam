@@ -46,7 +46,7 @@ export default function RootLayout({
 }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body className="bg-black loading">
+      <body className="bg-[#f8f8f8] loading">
         <SupabaseProvider>
           <Navbar />
           <main>{children}</main>
