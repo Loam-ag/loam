@@ -76,12 +76,14 @@ export default function FieldArray({
             )}
           </div>
         ))}
-        <button
-          onClick={() => append(defaultValues)}
-          className="bg-black text-white font-bold py-2 px-4 rounded"
-        >
-          Add {arrayFields.label}
-        </button>
+        {fields.length !== 0 && (
+          <button
+            onClick={() => append(defaultValues)}
+            className="bg-black text-white font-bold py-2 px-4 rounded"
+          >
+            Add {arrayFields.label}
+          </button>
+        )}
       </>
     </div>
   );

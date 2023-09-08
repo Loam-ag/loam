@@ -4,7 +4,6 @@ import FieldArray from '@/components/form/FieldArray';
 import FormInput from '@/components/form/FormInput';
 import AiAvatar from '@/components/icons/AiAvatar';
 import CheckMarkIcon from '@/components/icons/CopyCheckedIcon';
-import CopyCheckedIcon from '@/components/icons/CopyCheckedIcon';
 import CopyIcon from '@/components/icons/CopyIcon';
 import EditIcon from '@/components/icons/EditIcon';
 import ThreeDotsAnimation from '@/components/icons/ThreeDotsAnimation';
@@ -18,8 +17,8 @@ import {
 } from '@/constants/verra/types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useChat } from 'ai/react';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 
 export type SubsectionFieldDefaultValues = Record<
@@ -32,7 +31,11 @@ export default function PddSection({
 }: {
   params: { subsection: string };
 }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname;
   const supabase = createClientComponentClient();
+  const [saveButtontext, setSaveButtonText] = useState('Save Progress');
   const [isCopied, setIsCopied] = useState(false);
   const [isDeletePressed, setIsDeletePressed] = useState(false);
   const sectionName = params.subsection.slice(0, -3);
@@ -42,6 +45,7 @@ export default function PddSection({
     subsection.id.includes(params.subsection)
   )?.hasAiOutput;
   const [aiOutput, setAiOutput] = useState('');
+  const [editedAiOutput, setEditedAiOutput] = useState('');
   const [userId, setUserId] = useState('');
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
@@ -53,11 +57,13 @@ export default function PddSection({
     getValues,
     watch,
     control,
-    resetField
+    resetField,
+    formState
   } = useForm({});
+  const { isValid, errors } = formState;
   const watchFields = watch();
   const [fields, setFields] = useState<SubsectionFieldParams>();
-  const onSubmit: SubmitHandler<any> = (data) => null;
+  const onSubmit: SubmitHandler<any> = () => null;
   const { messages, append, isLoading } = useChat({
     body: {
       id: id,
@@ -73,6 +79,32 @@ export default function PddSection({
     }
   }, [messages]);
 
+  const handleVisibilityChange = useCallback(async () => {
+    if (document.hidden) {
+      const fieldValues = getValues();
+      if (Object.keys(fieldValues).length !== 0) {
+        await performUpsert(fieldValues);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [handleVisibilityChange]);
+
+  // useEffect(() => {
+  //   const saveOnPathnameChange = async () => {
+  //     const fieldValues = getValues();
+  //     if (Object.keys(fieldValues).length !== 0) {
+  //       await performUpsert(fieldValues);
+  //     }
+  //   };
+  //   saveOnPathnameChange();
+  // }, [pathname, searchParams]);
+
   useEffect(() => {
     const getSavedResponses = async () => {
       const VerraSubsection = SECTIONS_VERRA_FIELDS[params.subsection];
@@ -83,17 +115,19 @@ export default function PddSection({
       const {
         data: { session }
       } = await supabase.auth.getSession();
-      setUserId(session?.user.id || '');
+      if (session === null) {
+        router.push('/signin');
+        return;
+      }
+      setUserId(session.user.id || '');
       // Fetch the saved field response data from Supabase
       try {
-        console.log(params.subsection, id, session?.user.id);
         const { data, error } = await supabase
           .from('verra_pdds')
           .select(params.subsection)
           .eq('id', id)
           .eq('user_id', session?.user.id)
           .single();
-        console.log('data', data);
         if (error) {
           console.log(error);
           // throw new Error('Getting saved responses failed');
@@ -160,12 +194,18 @@ export default function PddSection({
   }, []);
 
   const performUpsert = async (fieldValues: FieldValues) => {
+    console.log('hit');
     try {
+      // refetching id to handle auto saving if leaving path or closing/changing tabs
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
       const { data, error } = await supabase
         .from('verra_pdds')
         .upsert({
           id: id,
-          user_id: userId,
+          user_id: session?.user.id,
           [params.subsection]: fieldValues,
           edited_at: new Date()
         })
@@ -179,22 +219,28 @@ export default function PddSection({
   };
 
   const handleGenerate = async () => {
-    const fieldValues = await handleSave();
-    // support dynamic fields for AI
-    let userInput =
-      Object.keys(fieldValues)
-        .map((key) => `${key}:${fields?.[key]?.label}\n`)
-        .join('') + JSON.stringify(fieldValues);
-    append({
-      content: userInput,
-      role: 'user'
-    });
+    if (isValid) {
+      const fieldValues = getValues();
+      await performUpsert(fieldValues);
+      // support dynamic fields for AI
+      let userInput =
+        Object.keys(fieldValues)
+          .map((key) => `${key}:${fields?.[key]?.label}\n`)
+          .join('') + JSON.stringify(fieldValues);
+      append({
+        content: userInput,
+        role: 'user'
+      });
+    }
   };
 
   const handleSave = async () => {
     const fieldValues = getValues();
     await performUpsert(fieldValues);
-    return fieldValues;
+    setSaveButtonText('Saved');
+    setTimeout(() => {
+      setSaveButtonText('Save Progress');
+    }, 2000);
   };
 
   const deleteResponse = async () => {
@@ -224,10 +270,47 @@ export default function PddSection({
     }, 2000);
   };
 
+  const displayedAiText = isDeletePressed
+    ? ''
+    : messages.filter((m) => m.role === 'assistant').pop()?.content || aiOutput;
+
+  const handleChange = (event: React.ChangeEvent<HTMLParagraphElement>) => {
+    setEditedAiOutput(event.target.innerText);
+  };
+  const handleEditAndSave = async () => {
+    if (isEditing) {
+      if (editedAiOutput !== '' && editedAiOutput !== displayedAiText) {
+        console.log('hit');
+        const { data, error } = await supabase
+          .from('verra_pdds_ai_outputs')
+          .upsert({
+            id: id,
+            user_id: userId,
+            [params.subsection]: editedAiOutput
+          })
+          .select();
+        if (error) {
+          throw new Error('Upsert completion failed for editing ai response');
+        }
+      }
+      setIsEditing(false);
+    } else {
+      setIsEditing(true);
+    }
+  };
+
   return (
     <div className="flex flex-row w-full gap-4">
       {fields && (
         <div className="w-1/2 mx-auto mt-8 px-4 pb-4">
+          {Object.keys(fields).length === 0 && (
+            <p className="text-black">
+              No leakage emissions are considered. The emissions potentially
+              arising due to activities such as power plant construction and
+              upstream emissions from fossil fuel use (e.g. extraction,
+              processing, transport etc.) are neglected.
+            </p>
+          )}
           <form onSubmit={handleSubmit(onSubmit)}>
             {Object.keys(fields).map((fieldName) => {
               const field = fields[fieldName];
@@ -236,10 +319,9 @@ export default function PddSection({
                   <FormInput
                     key={fieldName}
                     register={register}
-                    unregister={unregister}
-                    getValues={getValues}
                     watchFields={watchFields}
                     resetField={resetField}
+                    errors={errors}
                     field={field}
                     fieldName={fieldName}
                   />
@@ -262,17 +344,19 @@ export default function PddSection({
                   className="bg-black text-white font-bold py-2 mt-8 px-4 rounded"
                   onClick={handleGenerate}
                 >
-                  Generate
+                  {isLoading ? 'Generating' : 'Generate'}
                 </button>
               </div>
             )}
           </form>
-          <button
-            onClick={handleSave}
-            className="bg-black text-white font-bold py-2 mt-8 px-4 rounded float-right mr-4"
-          >
-            Save Progress
-          </button>
+          {Object.values(fields).length !== 0 && (
+            <button
+              onClick={handleSave}
+              className="bg-black text-white font-bold py-2 mt-8 px-4 rounded float-right mr-4"
+            >
+              {saveButtontext}
+            </button>
+          )}
         </div>
       )}
       {hasAiOutput ? (
@@ -283,7 +367,9 @@ export default function PddSection({
                 <AiAvatar className={isLoading ? '' : 'mb-6'} />
                 {isLoading && <ThreeDotsAnimation className="h-6 w-6" />}
               </div>
-              <EditIcon />
+              <button onClick={handleEditAndSave}>
+                {isEditing ? <CheckMarkIcon /> : <EditIcon />}
+              </button>
               <button onClick={handleCopy}>
                 {isCopied ? <CheckMarkIcon /> : <CopyIcon />}
               </button>
@@ -291,11 +377,14 @@ export default function PddSection({
                 <TrashIcon />
               </button>
             </div>
-            <p className="ml-6 text-black mt-4 whitespace-pre-line">
-              {isDeletePressed
-                ? ''
-                : messages.filter((m) => m.role === 'assistant').pop()
-                    ?.content || aiOutput}
+            <p
+              className={`editableElement ml-6 p-2 text-black mt-2 whitespace-pre-line outline-none ${
+                isEditing && 'border-blue-600 border-2 rounded-md'
+              }`}
+              contentEditable={isEditing}
+              onInput={handleChange}
+            >
+              {displayedAiText}
             </p>
           </>
         </div>

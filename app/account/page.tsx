@@ -64,7 +64,7 @@ export default async function Account() {
   };
 
   return (
-    <section className="mb-32 bg-black">
+    <section className="pb-32 bg-black">
       <div className="max-w-6xl px-4 py-8 mx-auto sm:px-6 sm:pt-24 lg:px-8">
         <div className="sm:align-center sm:flex sm:flex-col">
           <h1 className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
@@ -76,7 +76,7 @@ export default async function Account() {
         </div>
       </div>
       <div className="p-4">
-        <Card
+        {/* <Card
           title="Your Plan"
           description={
             subscription
@@ -92,7 +92,7 @@ export default async function Account() {
               <Link href="/">Choose your plan</Link>
             )}
           </div>
-        </Card>
+        </Card> */}
         <Card
           title="Your Name"
           description="Please enter your full name, or a display name you are comfortable with."
@@ -103,7 +103,7 @@ export default async function Account() {
                 variant="slim"
                 type="submit"
                 form="nameForm"
-                disabled={true}
+                // disabled={true}
               >
                 {/* WARNING - In Next.js 13.4.x server actions are in alpha and should not be used in production code! */}
                 Update Name

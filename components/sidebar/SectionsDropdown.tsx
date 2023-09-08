@@ -35,13 +35,13 @@ export default function SectionsDropdown({ section }: Props) {
           {section.form_subsections?.map((item, index) => (
             <Link
               key={item.id}
-              href={`/dashboard/pdd/section/${item.id}`}
+              href={`/pdd/section/${item.id}`}
               className={`text-black mx-6 text-[18px]py-6 text-left block mb-4 pb-4 ${
                 index === section.form_subsections.length - 1
                   ? ''
                   : 'border-b-2'
               } px-4 ${index === 0 && 'pt-4'} ${
-                pathname === `/dashboard/pdd/section/${item.id}` && 'font-bold'
+                pathname === `/pdd/section/${item.id}` && 'font-bold'
               }`}
             >
               {item.subsection_name}

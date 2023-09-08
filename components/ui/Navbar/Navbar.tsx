@@ -59,34 +59,20 @@ export default function Navbar() {
             </Link>
             <div>
               <nav className="space-x-16 md:space-x-28 flex flex-row items-center">
-                <Link href="/">
-                  <div className="flex flex-col items-center">
-                    <HomeIcon
-                      color={checkActivePath('/') ? '#EE5D30' : '#94B8A3'}
-                    />
-                    <p
-                      className={
-                        checkActivePath('/') ? 'text-white' : 'text-slate-400'
-                      }
-                    >
-                      Home
-                    </p>
-                  </div>
-                </Link>
                 {user && (
                   <>
-                    <Link href="/dashboard">
+                    <Link href="/">
                       <div className="flex flex-col items-center">
                         <PddWritingIcon
                           color={
-                            checkActivePath('/dashboard')
+                            checkActivePath('/') || checkActivePath('/pdd-gen')
                               ? '#EE5D30'
                               : '#94B8A3'
                           }
                         />
                         <p
                           className={
-                            checkActivePath('/dashboard')
+                            checkActivePath('/') || checkActivePath('/pdd-gen')
                               ? 'text-white'
                               : 'text-slate-400'
                           }

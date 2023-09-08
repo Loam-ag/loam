@@ -19,7 +19,7 @@ export const VERRA_SECTIONS: Section[] = [
     number: '0.',
     name: 'Get Started',
     subsections: [],
-    hrefValue: '/dashboard/pdd-gen/verra_0_01'
+    hrefValue: '/pdd-gen/verra_0_01'
   },
   {
     id: 'verra_1',
@@ -257,6 +257,6 @@ export const VERRA_SECTIONS: Section[] = [
     number: '',
     name: 'Appendix',
     subsections: [],
-    hrefValue: '/dashboard/pdd-gen/verra_appendix'
+    hrefValue: '/pdd-gen/verra_appendix'
   }
 ];

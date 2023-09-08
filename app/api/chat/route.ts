@@ -18,7 +18,6 @@ export async function POST(req: Request) {
   const supabase = createRouteHandlerClient({ cookies });
   const { messages, subsectionId, subsectionPrompt, userId, id } =
     await req.json();
-  console.log(messages);
   const initialMessage = [
     { role: 'system', content: subsectionPrompt }
   ] as Array<ChatCompletionRequestMessage>;

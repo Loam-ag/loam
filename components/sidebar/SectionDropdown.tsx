@@ -67,12 +67,11 @@ export default function SectionDropdown({
           {subsections.map((subsection, index) => (
             <Link
               key={subsection.name}
-              href={`/dashboard/pdd-gen/${subsection.id}?id=${id}`}
+              href={`/pdd-gen/${subsection.id}?id=${id}`}
               className={`text-black mx-6 text-[16px] text-left block ${
                 index === subsections.length - 1 ? '' : 'border-b-2'
               } px-4 py-4 ${
-                pathname === `/dashboard/pdd-gen/${subsection.id}` &&
-                'font-bold'
+                pathname === `/pdd-gen/${subsection.id}` && 'font-bold'
               }`}
             >
               <div className="flex flex-row gap-2">

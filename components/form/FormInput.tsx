@@ -3,6 +3,7 @@
 import { Field } from '@/constants/verra/types';
 import { useEffect, useState } from 'react';
 import {
+  FieldErrors,
   FieldValues,
   UseFormGetValues,
   UseFormRegister,
@@ -12,20 +13,18 @@ import {
 
 type FormInputProps = {
   register: UseFormRegister<FieldValues>;
-  unregister: UseFormUnregister<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
   watchFields: any;
   resetField: UseFormResetField<FieldValues>;
+  errors: FieldErrors<FieldValues>;
   field: Field;
   fieldName: string;
 };
 
 export default function FormInput({
   register,
-  unregister,
-  getValues,
   watchFields,
   resetField,
+  errors,
   field,
   fieldName
 }: FormInputProps) {
@@ -52,13 +51,13 @@ export default function FormInput({
   useEffect(() => {
     setIsFieldRendered(compareConditionals(field.conditionals, watchFields));
   }, [watchFields]);
-
   switch (type) {
     case 'textarea':
       inputField = (
         <textarea
           {...register(fieldName, {
-            required: required === false ? false : true
+            required:
+              required === false ? false : 'Required field before generating'
           })}
           className="w-full border border-gray-300 p-2 rounded-md resize-none text-black"
           rows={4}
@@ -70,7 +69,8 @@ export default function FormInput({
       inputField = (
         <select
           {...register(fieldName, {
-            required: required === false ? false : true
+            required:
+              required === false ? false : 'Required field before generating'
           })}
           className="w-full border rounded p-2 text-black"
         >
@@ -90,7 +90,10 @@ export default function FormInput({
             <div key={option}>
               <input
                 {...register(fieldName, {
-                  required: required === false ? false : true
+                  required:
+                    required === false
+                      ? false
+                      : 'Required field before generating'
                 })}
                 className="mr-2"
                 type="radio"
@@ -112,7 +115,8 @@ export default function FormInput({
       inputField = (
         <input
           {...register(fieldName, {
-            required: required === false ? false : true
+            required:
+              required === false ? false : 'Required field before generating'
           })}
           className="w-full border rounded p-2 text-black"
           type="date"
@@ -127,7 +131,10 @@ export default function FormInput({
             <div key={option}>
               <input
                 {...register(fieldName, {
-                  required: required === false ? false : true
+                  required:
+                    required === false
+                      ? false
+                      : 'Required field before generating'
                 })}
                 className="mr-2"
                 type="checkbox"
@@ -149,7 +156,8 @@ export default function FormInput({
       inputField = (
         <input
           {...register(fieldName, {
-            required: required === false ? false : true
+            required:
+              required === false ? false : 'Required field before generating'
           })}
           className="w-full border rounded p-2 text-black"
           type="text"
@@ -163,6 +171,9 @@ export default function FormInput({
         <div className="mb-4 mr-4">
           <label className="block text-black mb-2 text-[16px]">{label}</label>
           {inputField}
+          <p className="text-red-500">
+            {(errors[fieldName]?.message as string) || ''}
+          </p>
         </div>
       ) : (
         <></>
