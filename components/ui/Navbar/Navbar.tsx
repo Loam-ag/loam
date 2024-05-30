@@ -5,6 +5,7 @@ import AccountIcon from '@/components/icons/AccountIcon';
 import HomeIcon from '@/components/icons/HomeIcon';
 import Logo from '@/components/icons/Logo';
 import PddWritingIcon from '@/components/icons/PddWritingIcon';
+import ResourcesIcon from '@/components/resources/icons/ResourcesIcon';
 import {
   createClientComponentClient,
   User
@@ -78,6 +79,26 @@ export default function Navbar() {
                           }
                         >
                           PDD Writing
+                        </p>
+                      </div>
+                    </Link>
+                    <Link href="/resources">
+                      <div className="flex flex-col items-center">
+                        <ResourcesIcon
+                          color={
+                            checkActivePath('/resources')
+                              ? '#EE5D30'
+                              : '#94B8A3'
+                          }
+                        />
+                        <p
+                          className={
+                            checkActivePath('/resources')
+                              ? 'text-white'
+                              : 'text-slate-400'
+                          }
+                        >
+                          Resources
                         </p>
                       </div>
                     </Link>
